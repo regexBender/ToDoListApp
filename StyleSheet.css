@@ -1,0 +1,206 @@
+h1 {
+    font-size: 30 px;
+}
+
+.banner {
+    /*margin-left: auto;
+    margin-right: auto; */
+    width: 100%;
+    height: 50px;
+    background-color: none;
+    text-align: center;
+    position: relative;
+}
+
+.logout_button {
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 90%;
+    
+}
+
+.main_container {
+    background-color: lightgray;
+    width: 80%;
+    height: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    border-radius: 5px;
+}
+
+.add_item {
+    width: 100%;
+    height: 50px;
+    background-color: none;
+    position: relative;
+    padding-left:auto;
+    padding-right:auto;
+    padding-bottom: 10px;
+    text-align:center;
+
+}
+
+.input_text {
+    width: 60%;
+    font-size: 20px;
+    display: inline-block;
+    position: relative;
+
+    padding: 14px 20px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.submit_task {
+    height: 90%;
+    width: 50px;
+    font-size: 20px;
+    display: inline-block;
+    position: relative;
+
+
+    border-radius: 4px;
+}
+
+input[type=checkbox] {
+    height: 20px;
+    width: 20px;
+    font-size: 20px;
+
+    border-radius: 4px;
+}
+
+.task {
+    background-color: rgb(37, 167, 37);
+    height: 50px;
+    width: 60%;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 20px;
+    
+    display:inline-block;
+    border-radius: 10px;
+    margin-left:auto;
+    margin-right:auto;
+}
+.task2 {
+    background-color: rgb(158, 25, 158);
+    height: 50px;
+    width: 60%;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 20px;
+    color:white;
+
+    display:inline-block;
+    border-radius: 10px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.complete {
+    background-color: rgb(110, 223, 110);
+    text-decoration: line-through;
+}
+.complete2 {
+    background-color: rgb(223, 134, 223);
+    text-decoration: line-through;
+}
+
+/* Register CSS*/
+.main_container_register {
+    background-color: lightgray;
+    width: 30%;
+    min-width: 500px;
+    height: 210px;px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    border-radius: 5px;
+}
+
+.left {
+    height: 100%;
+    width: 28%;
+    border-right: 2px solid black;
+    display: flex;
+    flex-direction: column;
+}
+
+.right {
+    height: 100%;
+    width: 68%;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: left;
+}
+
+.register_text {
+    width: 100%;
+    height: 50px;
+    font-size: 20px;
+    display: inline-flex;
+
+    padding: 14px 20px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.register_label {
+    width: 100%;
+    height: 50px;
+    font-size: 20px;
+    text-align: right;
+    display: inline-block;
+    margin-left: auto;
+    padding: 14px 20px;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.submit_register {
+    width: 100%;
+    height: 50px;
+    border-radius: 5px;
+    font-size: 20px;
+    background-color: lightblue;
+}
+
+/* Login CSS*/
+.main_container_login {
+    background-color: lightgray;
+    width: 30%;
+    min-width: 500px;
+    height: 110px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    border-radius: 5px;
+}
+
+.left_login {
+    height: 100%;
+    width: 18%;
+    display: flex;
+    flex-direction: column;
+}
+
+.right_login {
+    height: 100%;
+    width: 78%;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: left;
+}
