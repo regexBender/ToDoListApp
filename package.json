@@ -1,0 +1,24 @@
+{
+  "name": "todolistapp",
+  "version": "1.0.0",
+  "description": "A simple todo list app",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aleclandow/ToDoListApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aleclandow/ToDoListApp/issues"
+  },
+  "homepage": "https://github.com/aleclandow/ToDoListApp#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}
