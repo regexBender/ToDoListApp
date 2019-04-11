@@ -1,11 +1,23 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+
 const app = express();
+
+const mysql = require("mysql");
+const connection = mysql.createConnection({
+    host    : "localhost",
+    user    : "root",
+    password: "root",
+    database: "alec"
+});
+
+var PORT = 3000;
+
 
 //app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(bodyParser.json()); // How can I use this instead of urlencoded...? Is urlencoded preferable?
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
-var jsonParser = bodyParser.json()
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+var jsonParser = bodyParser.json();
 
 const todos = [ // what is an easy way to access one of these objects in an array?
     { id: 1, checked: true, content: "A", created: new Date() },
@@ -19,7 +31,30 @@ var nextID = 6;
 
 app.get("/todos", (req, res) => {
     res.status(200);
-    res.json(todos); // why not use send? // json interprets as JSON, can do more
+    //res.json(todos);  // why not use send? // json interprets as JSON, can do more 
+
+    connection.connect( (err) => {
+        
+            if (err) {
+                throw err;
+            }   
+        
+    
+            console.log("Connected to database");
+    });
+    
+    //res.json("Test1");
+
+    connection.query("SELECT * FROM `todo`", (err, rows, fields) => {
+        res.json(rows);
+    });
+    
+    //connection.query("SELECT * FROM `todo`", (err, rows, fields) => {
+    //    res.json("Test1");
+    //});
+
+
+ 
 })
 
 // Need to use request body
@@ -82,6 +117,10 @@ app.get("/", (req, res) => {
     });
 });
 
-app.listen(3000, () => {
-    console.log("Application running on port 3000.");
+
+
+app.listen(PORT, () => {
+    console.log(`Application running on port ${PORT}.`);
 });
+
+//connection.end();
