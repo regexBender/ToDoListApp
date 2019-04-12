@@ -13,13 +13,22 @@ const connection = mysql.createConnection({
 
 var PORT = 3000;
 
+connection.connect( (err) => { // How/where do I close with connect.end() ?
+        
+    if (err) {
+        throw err;
+    }   
+
+
+    console.log("Connected to database");
+});
 
 //app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(bodyParser.json()); // How can I use this instead of urlencoded...? Is urlencoded preferable?
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var jsonParser = bodyParser.json();
 
-const todos = [ // what is an easy way to access one of these objects in an array?
+const todos = [
     { id: 1, checked: true, content: "A", created: new Date() },
     { id: 2, checked: false, content: "B", created: new Date() },
     { id: 3, checked: true, content: "C", created: new Date() },
@@ -33,27 +42,10 @@ app.get("/todos", (req, res) => {
     res.status(200);
     //res.json(todos);  // why not use send? // json interprets as JSON, can do more 
 
-    connection.connect( (err) => {
-        
-            if (err) {
-                throw err;
-            }   
-        
-    
-            console.log("Connected to database");
-    });
-    
-    //res.json("Test1");
-
     connection.query("SELECT * FROM `todo`", (err, rows, fields) => {
         res.json(rows);
     });
     
-    //connection.query("SELECT * FROM `todo`", (err, rows, fields) => {
-    //    res.json("Test1");
-    //});
-
-
  
 })
 
@@ -61,19 +53,28 @@ app.get("/todos", (req, res) => {
 // If task became large, it would be truncated
 //      post body is not limited 
 app.post("/todos", urlencodedParser, (req, res) => {
-    //var thisID = req.body.id;
-    //var task = req.param('task');
+    
     var task = req.body.task;
 
     todos.push({id: nextID, checked: false, content: task, created: new Date()});
     nextID++;
-    res.json(todos);
+
+    connection.query("INSERT INTO `todo` SET ?", {content: task}, (err, results, fields) => {
+        if (err) throw err;
+        console.log("Task added.");
+        res.json(results);
+    });
+
 })
 
-app.get("/todos/:id", (req, res) => { // Add / before :id
+app.get("/todos/:id", (req, res) => {
     res.status(200);
-    // Send back the todo
-    res.json("Got ID: " + req.param('id')); // single quote vs. double quote? Style preference
+
+    connection.query("SELECT * FROM `todo` WHERE `id` = ?", [req.param("id")], (err, rows, fields) => { // Do I need ` ticks?
+        if (err) throw err;
+        console.log("Got ID " + res.param("id"));
+        res.json(rows);
+    });
 })
 
 // Post can do same as patch, but use convention to implement what the protocol says
@@ -82,32 +83,40 @@ app.get("/todos/:id", (req, res) => { // Add / before :id
 // :id is different from other parameters (can access using req.param())
 // Access others via the body
 //      Look up "request body"
-app.patch("/todos/:id", (req, res) => {
+app.patch("/todos/:id", urlencodedParser, (req, res) => {
+
+    var task = req.body.task;
     
-    // Is there an easier way to update an element of the array?
-    // todos.findIndex( (item) => item.id == req.param('id') )
-    for (var i = 0; i < todos.length; i++) {
-        if (todos[i].id == req.param('id')) { // === does not work // Data from req.param('id') is a string
-            todos[i].content = req.param('update');
-            break;
-        }
-    }
-    
-    //todos[req.params.id - 1].content = req.params.update; // "content" disappears from id:1
-    //todos[req.param('id') - 1].content = req.param('update');
-    res.json(todos);
+    connection.query("UPDATE `todo` SET `content` = ? WHERE `id` = ?", [task, req.param("id")], (err, results, fields) => {
+        if (err) throw err;
+        console.log("Task updated.");
+        res.json(results);
+    });
+
 })
 
 app.delete("/todos/:id", (req, res) => {
 
-    for (var i = 0; i < todos.length; i++) {
-        if (todos[i].id == req.param('id')) { // === does not work
-            todos.splice(i, 1);
-            break;
+    connection.query("SELECT * FROM `todo` WHERE `id` = ?", [req.param("id")], (err, rows, fields) => {
+        if (err) throw err;
+        
+        if (rows.length) {
+            connection.query("DELETE FROM `todo` WHERE `id` = ?", [req.param("id")], (err, rows, fields) => {
+                if (err) throw err;
+                console.log("ID " + req.param("id") + " deleted");
+                res.json(rows);
+            });
+        } else {
+            console.log(`ID ${req.param("id")} does not exist.`);
+            res.json(`ID ${req.param("id")} does not exist.`);
         }
-    }
 
-    res.json(todos);
+
+    });
+
+
+    
+    
 })
 
 app.get("/", (req, res) => {
