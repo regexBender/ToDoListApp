@@ -128,8 +128,20 @@ app.get("/", (req, res) => {
 
 
 
-app.listen(PORT, () => {
+
+const server = app.listen(PORT, () => {
     console.log(`Application running on port ${PORT}.`);
 });
 
-//connection.end();
+app.get("/quit", (req, res) => {
+    res.status(200);
+    
+    res.send("closing...")
+    
+    console.log("Closing the database...");
+    connection.end();
+
+    console.log("Closing the node server...");
+    server.close();
+    process.exit();
+});
