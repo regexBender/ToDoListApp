@@ -13,6 +13,7 @@ const connection = mysql.createConnection({
 
 var PORT = 3000;
 
+// PM2 --> Look at this.
 connection.connect( (err) => { // How/where do I close with connect.end() ?
         
     if (err) {
@@ -39,12 +40,14 @@ const todos = [
 var nextID = 6;
 
 app.get("/todos", (req, res) => {
-    res.status(200);
+    
     //res.json(todos);  // why not use send? // json interprets as JSON, can do more 
 
     connection.query("SELECT * FROM `todo`", (err, rows, fields) => {
+        res.status(200); // send back status once query is complete, must be before res.json
         res.json(rows);
     });
+    
     
  
 })
@@ -56,23 +59,24 @@ app.post("/todos", urlencodedParser, (req, res) => {
     
     var task = req.body.task;
 
-    todos.push({id: nextID, checked: false, content: task, created: new Date()});
-    nextID++;
-
     connection.query("INSERT INTO `todo` SET ?", {content: task}, (err, results, fields) => {
         if (err) throw err;
+        res.status(201);
         console.log("Task added.");
-        res.json(results);
+        connection.query("SELECT * FROM `todo` WHERE id = LAST_INSERT_ID()", (err, rows, fields) => {
+            res.json(rows);
+        });
+        
     });
 
 })
 
 app.get("/todos/:id", (req, res) => {
-    res.status(200);
 
     connection.query("SELECT * FROM `todo` WHERE `id` = ?", [req.param("id")], (err, rows, fields) => { // Do I need ` ticks?
         if (err) throw err;
-        console.log("Got ID " + res.param("id"));
+        res.status(200);
+        console.log("Got ID " + req.param("id"));
         res.json(rows);
     });
 })
@@ -84,12 +88,30 @@ app.get("/todos/:id", (req, res) => {
 // Access others via the body
 //      Look up "request body"
 app.patch("/todos/:id", urlencodedParser, (req, res) => {
+    var update = {};
 
     var task = req.body.task;
+    var check_flag = req.body.checked;
+
+    if (task) {
+        update.content = task;
+    }
     
-    connection.query("UPDATE `todo` SET `content` = ? WHERE `id` = ?", [task, req.param("id")], (err, results, fields) => {
+    if (check_flag) {
+        update.checked = check_flag;
+    }
+    
+
+    connection.query("UPDATE `todo` SET ? WHERE `id` = ?", [update, req.param("id")], (err, results, fields) => {
         if (err) throw err;
-        console.log("Task updated.");
+        res.status(201);
+        if (task) {
+            console.log("content updated.");
+        }
+
+        if (check_flag) {
+            console.log("checked updated.");
+        }
         res.json(results);
     });
 
@@ -103,12 +125,13 @@ app.delete("/todos/:id", (req, res) => {
         if (rows.length) {
             connection.query("DELETE FROM `todo` WHERE `id` = ?", [req.param("id")], (err, rows, fields) => {
                 if (err) throw err;
+                res.status(204);
                 console.log("ID " + req.param("id") + " deleted");
                 res.json(rows);
             });
         } else {
             console.log(`ID ${req.param("id")} does not exist.`);
-            res.json(`ID ${req.param("id")} does not exist.`);
+            res.send(`ID ${req.param("id")} does not exist.`);
         }
 
 
@@ -126,7 +149,26 @@ app.get("/", (req, res) => {
     });
 });
 
+function endDatabaseConnection(callback) {
+    setTimeout(() => {
+        console.log("endDatabaseConnection");
+        callback();
+    }, 4000);
+}
 
+function endServer(callback) {
+    setTimeout(() => {
+        console.log("endServer");
+        callback();
+    }, 1000);
+}
+
+function killProcess(callback) {
+    setTimeout(() => {
+        console.log("Kill process");
+        callback();
+    }, 500);
+}
 
 
 const server = app.listen(PORT, () => {
@@ -135,13 +177,17 @@ const server = app.listen(PORT, () => {
 
 app.get("/quit", (req, res) => {
     res.status(200);
-    
     res.send("closing...")
-    
-    console.log("Closing the database...");
-    connection.end();
-
-    console.log("Closing the node server...");
-    server.close();
-    process.exit();
+    endDatabaseConnection(() => {
+        endServer(() => {
+            killProcess(() => {
+                console.log("Done with all functions");
+            });
+        });
+    });
+    // connection.end();
+    // server.close();
+    // process.exit();
 });
+
+// intercept CTRL-C to execute closing processes
