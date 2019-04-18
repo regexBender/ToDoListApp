@@ -137,10 +137,67 @@ app.delete("/todos/:id", (req, res) => {
 
     });
 
-
-    
-    
 })
+
+//----------------------------------------------------------------------------------//
+//   Register
+//----------------------------------------------------------------------------------//
+app.post("/register", urlencodedParser, (req, res) => {
+
+    var email_to_register = req.body.email;
+    var password_to_register = req.body.password;
+
+    // Check to see if email already exists in the database
+    connection.query("SELECT email FROM email_password WHERE ?", {email: email_to_register}, (err, rows, fields) => {
+        if (err) throw err;
+        if (rows.length == 0) {
+            connection.query("INSERT INTO email_password SET ?", {email: email_to_register, password: password_to_register}, (err, rows, fields) => {
+                if (err) throw err;
+                res.status(201);
+                res.send("Email successfully registered");
+            })
+        } else {
+            res.status(504); // What status?
+            res.send("This email is already registered.");
+            console.log(`The email ${email_to_register} is already in the database.`);
+        }
+    });
+
+});
+
+
+//----------------------------------------------------------------------------------//
+//   Register
+//----------------------------------------------------------------------------------//
+app.post("/login", urlencodedParser, (req, res) => {
+
+    var email_login = req.body.email;
+    var password_login = req.body.password;
+
+    connection.query("SELECT email, password FROM email_password WHERE ?", {email: email_login}, (err, rows, fields) => {
+        if (err) throw err;
+        if (rows.length == 0) { // The email does not match
+            res.status(504); // What status?
+            res.send("The email is either incorrect or unregistered.");
+            console.log(`The email ${email_login} was not in the database.`);
+        } else { // The email matches
+
+            if (password_login != rows[0].password) { // But the password does not match
+                res.status(504); // What status?
+                res.send("The password is incorrect.");
+                console.log(`The password ${password_login} is incorrect. The correct password was ${rows[0].password}.`);
+            } else { // Email and password are in the database!
+                res.status(201);
+                res.send("Login successful!");
+                console.log("Login successful!");
+            }
+
+        }
+    });
+
+});
+
+
 
 app.get("/", (req, res) => {
     res.status(200);
