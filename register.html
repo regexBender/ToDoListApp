@@ -9,6 +9,31 @@
             $(document).ready(() => {
                 console.log("Document is ready!!!!");
             });
+
+            // Attach a submit handler to the form
+            $( "#register_form" ).submit( ( event ) => {
+            
+                // Stop form from submitting normally
+                event.preventDefault();
+
+                // Get some values from elements on the page:
+                var $form = $( this ),
+                    email_to_register = $form.find( "input[name='email']" ).val(),
+                    password_to_register = $form.find( "input[name='password']" ).val(),
+                    url = $form.attr( "action" );
+
+                // Send the data using post
+                var posting = $.post( url, { email: email_to_register, password: password_to_register } );
+
+                // Put the results in a div
+                posting.done( ( data ) => {
+                    var content = $( data ).find( "#content" );
+                    $( "#message" ).empty().append( content );
+                });
+
+                return false;
+            });
+
         </script>
     </head>
     <body>
@@ -17,7 +42,7 @@
         </div>
 
         <hr/>
-        <form action="">
+        <form method="POST" action="http://localhost:3000/register" id="register_form">
             <div class="main_container_register">
                 <div class="left">
                     <div class="register_label">
@@ -50,5 +75,6 @@
                 <input class="submit_register" value="Register" type="submit">
             </div>
         </form>
+        <div id="message"></div>
     </body>
 </html>
