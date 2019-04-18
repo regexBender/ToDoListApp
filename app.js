@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
+//app.use(express.static(path.join(__dirname, 'public')));
+
 const mysql = require("mysql");
 const connection = mysql.createConnection({
     host    : "localhost",
@@ -154,7 +156,11 @@ app.post("/register", urlencodedParser, (req, res) => {
             connection.query("INSERT INTO email_password SET ?", {email: email_to_register, password: password_to_register}, (err, rows, fields) => {
                 if (err) throw err;
                 res.status(201);
-                res.send("Email successfully registered");
+                //res.send("Email successfully registered");
+                res.render("C:/Users/alandow/Documents/Pair_Coding/ToDoListApp/register.html", (err, html) => {
+                    if (err) throw err;
+                    res.send(html);
+                });
             })
         } else {
             res.status(504); // What status?
