@@ -5,6 +5,39 @@
         </title>
 
         <link rel="stylesheet" href="StyleSheet.css" type="text/css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(() => {
+                console.log("Document is ready!!!!");
+            });
+
+            // Attach a submit handler to the form
+            $( "#login_form" ).submit( ( event ) => {
+            
+                // Stop form from submitting normally
+                event.preventDefault();
+
+                // Get some values from elements on the page:
+                // [AL] It appears the name field in an element must match a SQL table column name
+                var $form = $( this ),
+                    email_to_register = $form.find( "input[name='email']" ).val(),
+                    password_to_register = $form.find( "input[name='password']" ).val(),
+                    url = $form.attr( "action" );
+
+                // Send the data using post
+                var posting = $.post( url, { email: email_to_register, password: password_to_register,
+                    firstname: firstname_to_register, lastname: lastname_to_register } );
+
+                // Put the results in a div
+                posting.done( ( data ) => {
+                    var content = $( data ).find( "#content" );
+                    $( "#message" ).empty().append( content );
+                });
+
+                return false;
+            });
+
+        </script>
     </head>
     <body>
         <div class="banner">
@@ -12,7 +45,7 @@
         </div>
 
         <hr/>
-        <form action="">
+        <form method="POST" action="http://localhost:3000/login" id="login_form">
             <div class="main_container_login">
                 <div class="left_login">
                     <div class="register_label">

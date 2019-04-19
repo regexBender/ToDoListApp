@@ -148,20 +148,46 @@ app.post("/register", urlencodedParser, (req, res) => {
 
     var email_to_register = req.body.email;
     var password_to_register = req.body.password;
+    var firstname_to_register = req.body.firstname;
+    var lastname_to_register = req.body.lastname;
 
     // Check to see if email already exists in the database
     connection.query("SELECT email FROM email_password WHERE ?", {email: email_to_register}, (err, rows, fields) => {
         if (err) throw err;
         if (rows.length == 0) {
-            connection.query("INSERT INTO email_password SET ?", {email: email_to_register, password: password_to_register}, (err, rows, fields) => {
+            connection.query("INSERT INTO email_password SET ?", 
+                    {email: email_to_register, password: password_to_register,
+                     firstname: firstname_to_register, lastname: lastname_to_register}, 
+                (err, rows, fields) => {
                 if (err) throw err;
-                res.status(201);
-                //res.send("Email successfully registered");
+                
+                /*
                 res.render("C:/Users/alandow/Documents/Pair_Coding/ToDoListApp/register.html", (err, html) => {
                     if (err) throw err;
                     res.send(html);
                 });
-            })
+                */
+                var new_table_name = "";
+                connection.query("SELECT userid FROM email_password WHERE email = ?", email_to_register, (err, rows, fields) => {
+                    if (err) throw err;
+                    console.log("userid: "+ rows[0].userid);
+                    new_table_name = "todo_" + rows[0].userid;
+                    console.log(new_table_name);
+                
+
+                    // This did not work at first because the event loop executed the query before
+                    //      new_table_name was assigned a value
+                    connection.query("CREATE TABLE ?? AS SELECT * FROM todo WHERE 1 > 2", new_table_name, (err, rows, fields) => {
+                        if (err) throw err;
+                        console.log(`New table created: ${new_table_name}`);
+                    });
+                    
+                });
+
+                res.status(201);
+                res.send("Email successfully registered");
+
+            });
         } else {
             res.status(504); // What status?
             res.send("This email is already registered.");

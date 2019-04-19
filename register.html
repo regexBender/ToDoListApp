@@ -17,13 +17,17 @@
                 event.preventDefault();
 
                 // Get some values from elements on the page:
+                // [AL] It appears the name field in an element must match a SQL table column name
                 var $form = $( this ),
                     email_to_register = $form.find( "input[name='email']" ).val(),
                     password_to_register = $form.find( "input[name='password']" ).val(),
+                    firstname_to_register = $form.find( "input[name='firstname']" ).val(),
+                    lastname_to_register = $form.find( "input[name='lastname']" ).val(),
                     url = $form.attr( "action" );
 
                 // Send the data using post
-                var posting = $.post( url, { email: email_to_register, password: password_to_register } );
+                var posting = $.post( url, { email: email_to_register, password: password_to_register,
+                    firstname: firstname_to_register, lastname: lastname_to_register } );
 
                 // Put the results in a div
                 posting.done( ( data ) => {
@@ -46,7 +50,7 @@
             <div class="main_container_register">
                 <div class="left">
                     <div class="register_label">
-                        First Name<submit type="text" id="first" placeholder="John"></submit>
+                        First Name
                     </div>
                     <div class="register_label">
                         Last Name
@@ -60,10 +64,10 @@
                 </div>
                 <div class="right">
                     <div>
-                        <input class="register_text" type="text" id="first" name="first" placeholder="John">
+                        <input class="register_text" type="text" id="first" name="firstname" placeholder="John">
                     </div>
                     <div>
-                        <input class="register_text" type="text" id="last" name="last" placeholder="Smith">
+                        <input class="register_text" type="text" id="last" name="lastname" placeholder="Smith">
                     </div>
                     <div>
                         <input class="register_text" type="text" id="email" name="email" placeholder="john.smith@example.com">
