@@ -3,6 +3,11 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 //app.use(express.static(path.join(__dirname, 'public')));
 
 const mysql = require("mysql");
@@ -244,7 +249,6 @@ app.post("/register", urlencodedParser, (req, res, next) => {
 
             });
         } else {
-            console.log("Here2");
             res.status(504); // What status?
             res.send("This email is already registered.");
             console.log(`The email ${email_to_register} is already in the database.`);

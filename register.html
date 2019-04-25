@@ -16,8 +16,6 @@
                 // Stop form from submitting normally
                 event.preventDefault();
                 
-                //debugger;
-
                 // Get values from elements on the page:
                                
                 email_to_register = $( "#email" ).val(); 
@@ -27,21 +25,27 @@
                 url = "http://localhost:3000/register";
 
                 // Send the data using post
-                debugger;
-                var posting = $.post( url, { 
-                    email: email_to_register, 
-                    password: password_to_register,
-                    firstname: firstname_to_register, 
-                    lastname: lastname_to_register 
-                });
+                
+                var posting = $.post(
+                    url, { 
+                            email    : email_to_register, 
+                            password : password_to_register,
+                            firstname: firstname_to_register, 
+                            lastname : lastname_to_register 
+                        }, 
+                    ( data ) => {
+                        console.log("Test3");
+                        console.log(data);
+                    $( "#message" ).empty().append( data );
+                    },
+                    'html'
+                );
 
-                // Put the results in a div
-                posting.done( ( data ) => {
-                    //debugger;
-                    var content = $( data ).find( "#content" );
-                    $( "#message" ).empty().append( content );
+                posting.fail( () => {
+                    console.log("Post failed, according to JQuery.");
                 });
-
+               
+                
             return false;
             });
         });
