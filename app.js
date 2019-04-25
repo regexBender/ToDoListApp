@@ -57,12 +57,17 @@ app.get("/todos", (req, res) => {
 // Need to use request body
 // If task became large, it would be truncated
 //      post body is not limited 
-app.post("/todos", urlencodedParser, (req, res) => {
+app.post("/todos", urlencodedParser, (req, res, next) => {
     
     var task = req.body.task;
 
     connection.query("INSERT INTO `todo` SET ?", {content: task}, (err, results, fields) => {
-        if (err) throw err;
+        if (err) {
+            res.status(400);
+            res.send(err);
+            console.log(err);
+            return next(err);
+        }
         res.status(201);
         console.log("Task added.");
         connection.query("SELECT * FROM `todo` WHERE id = LAST_INSERT_ID()", (err, rows, fields) => {
@@ -73,10 +78,15 @@ app.post("/todos", urlencodedParser, (req, res) => {
 
 })
 
-app.get("/todos/:id", (req, res) => {
+app.get("/todos/:id", (req, res, next) => {
 
     connection.query("SELECT * FROM `todo` WHERE `id` = ?", [req.param("id")], (err, rows, fields) => { // Do I need ` ticks?
-        if (err) throw err;
+        if (err) {
+            res.status(400);
+            res.send(err);
+            console.log(err);
+            return next(err);
+        }
         res.status(200);
         console.log("Got ID " + req.param("id"));
         res.json(rows);
@@ -89,7 +99,7 @@ app.get("/todos/:id", (req, res) => {
 // :id is different from other parameters (can access using req.param())
 // Access others via the body
 //      Look up "request body"
-app.patch("/todos/:id", urlencodedParser, (req, res) => {
+app.patch("/todos/:id", urlencodedParser, (req, res, next) => {
     var update = {};
 
     var task = req.body.task;
@@ -105,7 +115,12 @@ app.patch("/todos/:id", urlencodedParser, (req, res) => {
     
 
     connection.query("UPDATE `todo` SET ? WHERE `id` = ?", [update, req.param("id")], (err, results, fields) => {
-        if (err) throw err;
+        if (err) {
+            res.status(400);
+            res.send(err);
+            console.log(err);
+            return next(err);
+        }
         res.status(201);
         if (task) {
             console.log("content updated.");
@@ -119,14 +134,24 @@ app.patch("/todos/:id", urlencodedParser, (req, res) => {
 
 })
 
-app.delete("/todos/:id", (req, res) => {
+app.delete("/todos/:id", (req, res, next) => {
 
     connection.query("SELECT * FROM `todo` WHERE `id` = ?", [req.param("id")], (err, rows, fields) => {
-        if (err) throw err;
+        if (err) {
+            res.status(400);
+            res.send(err);
+            console.log(err);
+            return next(err);
+        }
         
         if (rows.length) {
             connection.query("DELETE FROM `todo` WHERE `id` = ?", [req.param("id")], (err, rows, fields) => {
-                if (err) throw err;
+                if (err) {
+                    res.status(400);
+                    res.send(err);
+                    console.log(err);
+                    return next(err);
+                }
                 res.status(204);
                 console.log("ID " + req.param("id") + " deleted");
                 res.json(rows);
@@ -144,7 +169,7 @@ app.delete("/todos/:id", (req, res) => {
 //----------------------------------------------------------------------------------//
 //   Register
 //----------------------------------------------------------------------------------//
-app.post("/register", urlencodedParser, (req, res) => {
+app.post("/register", urlencodedParser, (req, res, next) => {
 
     var email_to_register = req.body.email;
     var password_to_register = req.body.password;
@@ -153,23 +178,48 @@ app.post("/register", urlencodedParser, (req, res) => {
 
     // Check to see if email already exists in the database
     connection.query("SELECT email FROM email_password WHERE ?", {email: email_to_register}, (err, rows, fields) => {
-        if (err) throw err;
+        if (err) {
+            res.status(400);
+            res.send(err);
+            console.log(err);
+            return next(err);
+        }
+        
         if (rows.length == 0) {
             connection.query("INSERT INTO email_password SET ?", 
-                    {email: email_to_register, password: password_to_register,
-                     firstname: firstname_to_register, lastname: lastname_to_register}, 
+                    {email: email_to_register, 
+                     password: password_to_register,
+                     firstname: firstname_to_register, 
+                     lastname: lastname_to_register}, 
                 (err, rows, fields) => {
-                if (err) throw err;
+
+                if (err) {
+                    res.status(400);
+                    res.send(err);
+                    console.log(err);
+                    return next(err);
+                }
                 
+               
                 /*
                 res.render("C:/Users/alandow/Documents/Pair_Coding/ToDoListApp/register.html", (err, html) => {
-                    if (err) throw err;
+                    if (err) {
+                        res.status(400);
+                        res.send(err);
+                        console.log(err);
+                        return next(err);
+                    }
                     res.send(html);
                 });
                 */
                 var new_table_name = "";
                 connection.query("SELECT userid FROM email_password WHERE email = ?", email_to_register, (err, rows, fields) => {
-                    if (err) throw err;
+                    if (err) {
+                        res.status(400);
+                        res.send(err);
+                        console.log(err);
+                        return next(err);
+                    }
                     console.log("userid: "+ rows[0].userid);
                     new_table_name = "todo_" + rows[0].userid;
                     console.log(new_table_name);
@@ -178,7 +228,12 @@ app.post("/register", urlencodedParser, (req, res) => {
                     // This did not work at first because the event loop executed the query before
                     //      new_table_name was assigned a value
                     connection.query("CREATE TABLE ?? AS SELECT * FROM todo WHERE 1 > 2", new_table_name, (err, rows, fields) => {
-                        if (err) throw err;
+                        if (err) {
+                            res.status(400);
+                            res.send(err);
+                            console.log(err);
+                            return next(err);
+                        }
                         console.log(`New table created: ${new_table_name}`);
                     });
                     
@@ -189,6 +244,7 @@ app.post("/register", urlencodedParser, (req, res) => {
 
             });
         } else {
+            console.log("Here2");
             res.status(504); // What status?
             res.send("This email is already registered.");
             console.log(`The email ${email_to_register} is already in the database.`);
@@ -207,7 +263,12 @@ app.post("/login", urlencodedParser, (req, res) => {
     var password_login = req.body.password;
 
     connection.query("SELECT email, password FROM email_password WHERE ?", {email: email_login}, (err, rows, fields) => {
-        if (err) throw err;
+        if (err) {
+            res.status(400);
+            res.send(err);
+            console.log(err);
+            return next(err);
+        }
         if (rows.length == 0) { // The email does not match
             res.status(504); // What status?
             res.send("The email is either incorrect or unregistered.");
@@ -280,3 +341,20 @@ app.get("/quit", (req, res) => {
 });
 
 // intercept CTRL-C to execute closing processes
+process.on("SIGINT", () => {
+    console.log("Caught interrupt signal");
+    endDatabaseConnection(() => {
+        console.log("Closing database connection...");
+        endServer(() => {
+            console.log("Closing the node server...")
+            killProcess(() => {
+                console.log("Closing app.js...");
+                console.log("Done with all functions");
+                process.exit();
+            });
+        });
+    });
+
+    
+
+});
