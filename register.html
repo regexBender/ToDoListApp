@@ -33,20 +33,21 @@
                             firstname: firstname_to_register, 
                             lastname : lastname_to_register 
                         }, 
-                    ( data ) => {
+                    (data) => {
                         console.log("Test3");
                         console.log(data);
-                    $( "#message" ).empty().append( data );
+                        $( "#message" ).empty().append( data );
                     },
-                    'html'
+                    'html' // response data format <-- cauases problems if is JSON
                 );
 
-                posting.fail( () => {
+                posting.fail( (xhr, status, err) => {
+                    $("#message").empty().append( xhr.responseText );
                     console.log("Post failed, according to JQuery.");
                 });
                
                 
-            return false;
+                return false; // Why return false?
             });
         });
 
@@ -91,8 +92,8 @@
                     </div>
                 </div>
                 <input class="submit_register" value="Register" type="submit">
+                <div class="message" id="message"></div>
             </div>
         </form>
-        <div id="message"></div>
     </body>
 </html>
