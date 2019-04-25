@@ -18,14 +18,13 @@
                 
                 //debugger;
 
-                // Get some values from elements on the page:
-                // [AL] It appears the name field in an element must match a SQL table column name
-                //var $form = $( this ),
-                    email_to_register = $( "#email" ).val(); //$form.find( "input[name='email']" ).val(),
-                    password_to_register = $( "#password" ).val();//$form.find( "input[name='password']" ).val(),
-                    firstname_to_register = $( "#first" ).val(); // $form.find( "input[name='firstname']" ).val(),
-                    lastname_to_register = $( "#last" ).val(); //$form.find( "input[name='lastname']" ).val(),
-                    url = "http://localhost:3000/register";
+                // Get values from elements on the page:
+                               
+                email_to_register = $( "#email" ).val(); 
+                password_to_register = $( "#password" ).val();
+                firstname_to_register = $( "#first" ).val();
+                lastname_to_register = $( "#last" ).val();
+                url = "http://localhost:3000/register";
 
                 // Send the data using post
                 debugger;
