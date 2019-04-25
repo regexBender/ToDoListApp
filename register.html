@@ -36,12 +36,14 @@
                     (data) => {
                         console.log("Test3");
                         console.log(data);
+                        $("#message").css("color", "green");
                         $( "#message" ).empty().append( data );
                     },
                     'html' // response data format <-- cauases problems if is JSON
                 );
 
                 posting.fail( (xhr, status, err) => {
+                    $("#message").css("color", "red");
                     $("#message").empty().append( xhr.responseText );
                     console.log("Post failed, according to JQuery.");
                 });
