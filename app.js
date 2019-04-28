@@ -1,15 +1,38 @@
 const express = require("express");
+const register = require("./routes/register");
+const login = require("./routes/login");
+
+const initDb = require("./database").initDb;
+const getDb = require("./database").getDb;
+
 const bodyParser = require("body-parser");
 
 const app = express();
 
-app.use(function(req, res, next) {
+
+var connection;
+initDb((err) => { // Initialize the database connection
+    if (err) {
+        next(err);
+    }
+
+    connection = getDb();
+});
+
+
+// Middleware function path invocations
+app.use("/routes/register", register);
+app.use("/routes/login", login);
+
+// Middleware callback functions
+// Had to add this to prevent failure of JQuery POST
+app.use( (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
   });
-//app.use(express.static(path.join(__dirname, 'public')));
 
+/*
 const mysql = require("mysql");
 const connection = mysql.createConnection({
     host    : "localhost",
@@ -17,10 +40,11 @@ const connection = mysql.createConnection({
     password: "root",
     database: "alec"
 });
-
+*/
 var PORT = 3000;
 
 // PM2 --> Look at this.
+/*
 connection.connect( (err) => { // How/where do I close with connect.end() ?
         
     if (err) {
@@ -30,6 +54,7 @@ connection.connect( (err) => { // How/where do I close with connect.end() ?
 
     console.log("Connected to database");
 });
+*/
 
 //app.use(bodyParser.urlencoded({ extended: false }));
 //app.use(bodyParser.json()); // How can I use this instead of urlencoded...? Is urlencoded preferable?
@@ -174,6 +199,9 @@ app.delete("/todos/:id", (req, res, next) => {
 //----------------------------------------------------------------------------------//
 //   Register
 //----------------------------------------------------------------------------------//
+
+{
+/*
 app.post("/register", urlencodedParser, (req, res, next) => {
 
     var email_to_register = req.body.email;
@@ -182,7 +210,7 @@ app.post("/register", urlencodedParser, (req, res, next) => {
     var lastname_to_register = req.body.lastname;
 
     // Check to see if email already exists in the database
-    connection.query("SELECT email FROM email_password WHERE ?", {email: email_to_register}, (err, rows, fields) => {
+    connection.query("SELECT email FROM users WHERE ?", {email: email_to_register}, (err, rows, fields) => {
         if (err) {
             res.status(400);
             res.send(err);
@@ -191,7 +219,7 @@ app.post("/register", urlencodedParser, (req, res, next) => {
         }
         
         if (rows.length == 0) {
-            connection.query("INSERT INTO email_password SET ?", 
+            connection.query("INSERT INTO users SET ?", 
                     {email: email_to_register, 
                      password: password_to_register,
                      firstname: firstname_to_register, 
@@ -204,7 +232,7 @@ app.post("/register", urlencodedParser, (req, res, next) => {
                     console.log(err);
                     return next(err);
                 }
-                
+                */
                
                 /*
                 res.render("C:/Users/alandow/Documents/Pair_Coding/ToDoListApp/register.html", (err, html) => {
@@ -216,34 +244,8 @@ app.post("/register", urlencodedParser, (req, res, next) => {
                     }
                     res.send(html);
                 });
-                */
-                var new_table_name = "";
-                connection.query("SELECT userid FROM email_password WHERE email = ?", email_to_register, (err, rows, fields) => {
-                    if (err) {
-                        res.status(400);
-                        res.send(err);
-                        console.log(err);
-                        return next(err);
-                    }
-                    console.log("userid: "+ rows[0].userid);
-                    new_table_name = "todo_" + rows[0].userid;
-                    console.log(new_table_name);
-                
-
-                    // This did not work at first because the event loop executed the query before
-                    //      new_table_name was assigned a value
-                    connection.query("CREATE TABLE ?? AS SELECT * FROM todo WHERE 1 > 2", new_table_name, (err, rows, fields) => {
-                        if (err) {
-                            res.status(400);
-                            res.send(err);
-                            console.log(err);
-                            return next(err);
-                        }
-                        console.log(`New table created: ${new_table_name}`);
-                    });
-                    
-                });
-
+                */ 
+/*
                 res.status(201);
                 res.send("Email successfully registered");
 
@@ -256,11 +258,13 @@ app.post("/register", urlencodedParser, (req, res, next) => {
     });
 
 });
-
+*/
+}
 
 //----------------------------------------------------------------------------------//
-//   Register
+//   Login
 //----------------------------------------------------------------------------------//
+/*
 app.post("/login", urlencodedParser, (req, res) => {
 
     var email_login = req.body.email;
@@ -293,6 +297,7 @@ app.post("/login", urlencodedParser, (req, res) => {
     });
 
 });
+*/
 
 
 
@@ -362,3 +367,4 @@ process.on("SIGINT", () => {
     
 
 });
+
