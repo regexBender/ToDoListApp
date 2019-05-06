@@ -38,3 +38,6 @@ function getDb() {
     assert.ok(_db, "Database has not been initialized. Please call initDB first.");
     return _db;
 }
+
+
+// Call initDb() once here.
