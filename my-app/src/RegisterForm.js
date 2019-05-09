@@ -29,8 +29,11 @@ schema
 
 class RegisterForm extends React.Component {
     state = {
-        validPassword: false
+        validPassword: false,
+        displayMessage: 'A'
     }
+
+    //this.displayMessage = this.displayMessage.bind(this);
 
     componentDidMount() {
         this.setState({
@@ -45,8 +48,13 @@ class RegisterForm extends React.Component {
         console.log(password);
 
         this.setState({
-            validPassword: schema.validate(password)
+            validPassword: schema.validate(password),
+            displayMessage: (!schema.validate(password)) ? 
+                schema.validate(password, {list: true}).join(", ") :
+                "Password is valid!"
         });
+
+        console.log("message: " + this.state.displayMessage);
     }
 
     handleSubmit = (event) => {
@@ -80,7 +88,7 @@ class RegisterForm extends React.Component {
     }
 
     render() {
-        const {validPassword} = this.state
+
         return (
         <div className="Register">
             <div className="banner">
@@ -146,11 +154,11 @@ class RegisterForm extends React.Component {
                     </div>
                     <input 
                         onChange = {this.handleChange}
-                        disabled = { Boolean(!validPassword) }
+                        disabled = { Boolean(!this.state.validPassword) }
                         className="submit_register" 
                         value="Register" 
                         type="submit" />
-                    <div className="message" id="message"></div>
+                    <div className="message" id="message">{this.state.displayMessage}</div>
                 </div>
             </form>
         </div>
