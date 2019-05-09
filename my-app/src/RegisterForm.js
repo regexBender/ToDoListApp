@@ -30,7 +30,8 @@ schema
 class RegisterForm extends React.Component {
     state = {
         validPassword: false,
-        displayMessage: 'A'
+        displayMessage: '',
+        messageStyle: {color: "green"}
     }
 
     //this.displayMessage = this.displayMessage.bind(this);
@@ -47,11 +48,15 @@ class RegisterForm extends React.Component {
 
         console.log(password);
 
+        var isValidPassword = schema.validate(password);
         this.setState({
-            validPassword: schema.validate(password),
-            displayMessage: (!schema.validate(password)) ? 
+            validPassword: isValidPassword,
+            displayMessage: ( !isValidPassword ) ? 
                 schema.validate(password, {list: true}).join(", ") :
-                "Password is valid!"
+                "Password is valid!",
+            messageStyle: ( !isValidPassword ) ? 
+                {color: "red"} :
+                {color: "green"},
         });
 
         console.log("message: " + this.state.displayMessage);
@@ -79,10 +84,18 @@ class RegisterForm extends React.Component {
         axios.post('./routes/register', qs.stringify(registration_info), 
         config)
         .then( (res) => {
+            this.setState({
+                displayMessage: "User was added successfully.",
+                messageStyle: {color: "green"}
+            });
             console.log("New user registered using React");
             console.log(qs.stringify(registration_info));
         })
         .catch( (error) => {
+            this.setState({
+                displayMessage: "User was not added.",
+                messageStyle: {color: "red"}
+            });
             console.log("There was an error: " + error);
         })
     }
@@ -158,7 +171,7 @@ class RegisterForm extends React.Component {
                         className="submit_register" 
                         value="Register" 
                         type="submit" />
-                    <div className="message" id="message">{this.state.displayMessage}</div>
+                    <div className="message" style={this.state.messageStyle} id="message">{this.state.displayMessage}</div>
                 </div>
             </form>
         </div>
