@@ -85,7 +85,7 @@ class RegisterForm extends React.Component {
         config)
         .then( (res) => {
             this.setState({
-                displayMessage: "User was added successfully.",
+                displayMessage: res.data,
                 messageStyle: {color: "green"}
             });
             console.log("New user registered using React");
@@ -93,7 +93,7 @@ class RegisterForm extends React.Component {
         })
         .catch( (error) => {
             this.setState({
-                displayMessage: "User was not added.",
+                displayMessage: "User was not added." + error,
                 messageStyle: {color: "red"}
             });
             console.log("There was an error: " + error);
