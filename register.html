@@ -22,7 +22,7 @@
                 password_to_register = $( "#password" ).val();
                 firstname_to_register = $( "#first" ).val();
                 lastname_to_register = $( "#last" ).val();
-                url = "http://localhost:3000/routes/register";
+                url = "http://localhost:3001/routes/register";
 
                 // Send the data using post
                 
@@ -39,7 +39,7 @@
                         $("#message").css("color", "green");
                         $( "#message" ).empty().append( data );
                     },
-                    'html' // response data format <-- cauases problems if is JSON
+                    'html' // response data format <-- causes problems if is JSON
                 );
 
                 posting.fail( (xhr, status, err) => {

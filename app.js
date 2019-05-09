@@ -41,7 +41,7 @@ const connection = mysql.createConnection({
     database: "alec"
 });
 */
-var PORT = 3000;
+var PORT = 3001;
 
 // PM2 --> Look at this.
 /*
