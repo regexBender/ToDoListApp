@@ -77,7 +77,7 @@ class LoginForm extends React.Component {
             this.setState({
                 displayMessage: res.data,
                 messageStyle: {color: "green"},
-                //goToList: true
+                goToList: true
             });
             console.log("New user registered using React");
             console.log(qs.stringify(registration_info));
@@ -92,7 +92,7 @@ class LoginForm extends React.Component {
     }
 
     render() {
-        /*
+        
         if (this.state.goToList) {
             return(
                 <Router to="/todolist/1" component={ToDoList}></Router>
@@ -101,7 +101,7 @@ class LoginForm extends React.Component {
                 //</Router>
                 )
         }
-        */
+        
 
         return (
             <div className="LoginForm">
