@@ -183,7 +183,6 @@ class RegisterForm extends React.Component {
                         </div>
                     </div>
                     <input 
-                        onChange = {this.handleChange}
                         disabled = { Boolean(!this.state.validPassword) }
                         className="submit_register" 
                         value="Register" 

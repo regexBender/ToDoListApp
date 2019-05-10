@@ -5,7 +5,8 @@ import { Route, Link, BrowserRouter as Router } from 'react-router-dom'
 
 import './index.css';
 import RegisterForm from './RegisterForm';
-import ToDoList from './ToDoList';
+import LoginForm    from './LoginForm';
+import ToDoList     from './ToDoList';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -21,6 +22,7 @@ class Main extends React.Component {
             <Router>
                 <Route exact path="/" component={App}></Route>
                 <Route exact path="/register" component={RegisterForm}></Route>
+                <Route exact path="/login" component={LoginForm}></Route>                
                 <Route path="/todolist/" component={ToDoList}></Route>
             </Router>
         )
