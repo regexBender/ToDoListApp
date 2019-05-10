@@ -93,6 +93,7 @@ register.post("/", urlencodedParser, (req, res, next) => {
 
                 res.status(201);
                 res.send("Email successfully registered");
+                //res.json({a: 1, b: 2});
 
             });
         } else {

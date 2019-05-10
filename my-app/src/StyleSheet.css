@@ -33,6 +33,8 @@ h1 {
 }
 
 .add_item {
+    vertical-align: top;
+    display: inline-block;
     width: 100%;
     height: 50px;
     background-color: none;
@@ -74,6 +76,11 @@ input[type=checkbox] {
     border-radius: 4px;
 }
 
+.middle {
+    text-align: center;
+    margin-bottom: auto;
+}
+
 .task {
     background-color: rgb(37, 167, 37);
     height: 50px;
@@ -81,7 +88,7 @@ input[type=checkbox] {
     padding: 10px;
     box-sizing: border-box;
     font-size: 20px;
-    
+    text-align: left;
     display:inline-block;
     border-radius: 10px;
     margin-left:auto;
@@ -94,8 +101,8 @@ input[type=checkbox] {
     padding: 10px;
     box-sizing: border-box;
     font-size: 20px;
-    color:white;
-
+    color: white;
+    text-align: left;
     display:inline-block;
     border-radius: 10px;
     margin-left:auto;

@@ -6,9 +6,6 @@ import ToDoList from './ToDoList';
 
 import './StyleSheet.css';
 
-const qs = require('qs');
-const passwordValidator = require('password-validator');
-
 const config = {
     headers: {
        'Content-Type': 'application/x-www-form-urlencoded',
@@ -31,41 +28,16 @@ schema
 
 
 
-class RegisterForm extends React.Component {
+class Login extends React.Component {
     state = {
-        validPassword: false,
         displayMessage: '',
         messageStyle: {color: "green"},
         goToList: false
     }
+        // What does bind() do?
+        //this.displayMessage = this.displayMessage.bind(this);
 
-    //this.displayMessage = this.displayMessage.bind(this);
 
-    componentDidMount() {
-        this.setState({
-            validPassword: schema.validate('')
-        })
-    }
-
-    handlePasswordChange = (event) => {
-        //const {password} = event.target;
-        var password = this.passwordNode.value;
-
-        console.log(password);
-
-        var isValidPassword = schema.validate(password);
-        this.setState({
-            validPassword: isValidPassword,
-            displayMessage: ( !isValidPassword ) ? 
-                schema.validate(password, {list: true}).join(", ") :
-                "Password is valid!",
-            messageStyle: ( !isValidPassword ) ? 
-                {color: "red"} :
-                {color: "green"},
-        });
-
-        console.log("message: " + this.state.displayMessage);
-    }
 
     handleSubmit = (event) => {
         event.preventDefault();
