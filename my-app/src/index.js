@@ -13,7 +13,10 @@ import * as serviceWorker from './serviceWorker';
 
 
 
-
+// Store global state in local storage
+// On login or register, store data (user info at first) in local storage
+//  Pull data for todos from local storage
+// Real way: state management library like redux
 
 class Main extends React.Component {
     

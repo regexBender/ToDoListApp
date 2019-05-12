@@ -49,7 +49,7 @@ class RegisterForm extends React.Component {
 
     handlePasswordChange = (event) => {
         //const {password} = event.target;
-        var password = this.passwordNode.value;
+        var password = this.passwordNode.value; // use const or let instead of var
 
         console.log(password);
 
@@ -57,13 +57,16 @@ class RegisterForm extends React.Component {
         this.setState({
             validPassword: isValidPassword,
             displayMessage: ( !isValidPassword ) ? 
-                schema.validate(password, {list: true}).join(", ") :
+                schema.validate(password, {list: true}).join(", ") : // refactor as a variable (maybe)
                 "Password is valid!",
-            messageStyle: ( !isValidPassword ) ? 
-                {color: "red"} :
-                {color: "green"},
+            messageStyle: {color: !isValidPassword ? "red" : "green"}
         });
-
+        /*
+        if (true) {
+            let something = '...';
+            password = "Bob";
+        }
+        */
         console.log("message: " + this.state.displayMessage);
     }
 
@@ -87,7 +90,7 @@ class RegisterForm extends React.Component {
 
         
     }
-
+// async await --> easier to follow
     post = (registration_info) => {
         axios.post('./routes/register', qs.stringify(registration_info), 
         config)
@@ -113,6 +116,8 @@ class RegisterForm extends React.Component {
         if (this.state.goToList) {
             return(
                 <Router to="/todolist/1" component={ToDoList}></Router>
+                // if (redirectToReferrer) return <Redirect to={from} />; // <-- Look into this
+
                 //<Router>
                 //    <Route exact path="/todolist/1" component={ToDoList}></Route>
                 //</Router>
@@ -187,7 +192,9 @@ class RegisterForm extends React.Component {
                         className="submit_register" 
                         value="Register" 
                         type="submit" />
-                    <div className="message" style={this.state.messageStyle} id="message">{this.state.displayMessage}</div>
+                    <div className="message" style={this.state.messageStyle} id="message">
+                        {this.state.displayMessage}
+                    </div>
                 </div>
             </form>
         </div>

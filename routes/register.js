@@ -71,33 +71,32 @@ register.post("/", urlencodedParser, (req, res, next) => {
                      lastname: lastname_to_register}, 
                 (err, rows, fields) => {
 
-                if (err) {
-                    res.status(400);
-                    res.send(err);
-                    console.log(err);
-                    return next(err);
-                }
-                
-               
-                /*
-                res.render("C:/Users/alandow/Documents/Pair_Coding/ToDoListApp/register.html", (err, html) => {
                     if (err) {
                         res.status(400);
                         res.send(err);
                         console.log(err);
                         return next(err);
                     }
-                    res.send(html);
-                });
-                */ 
+                
 
-                res.status(201);
-                res.send("Email successfully registered");
-                //res.json({a: 1, b: 2});
+                connection.query("SELECT LAST_INSERT_ID()", (err, this_id) => {
+                    if (err) {
+                        res.status(400);
+                        res.send(err);
+                        console.log(err);
+                        return next(err);
+                    }
+
+                    res.status(201);
+                    //res.send("Email successfully registered");
+                    res.json(this_id[0]);
+
+                })
+                
 
             });
         } else {
-            res.status(504); // What status?
+            res.status(400); // Validation error
             res.send("This email is already registered.");
             console.log(`The email ${email_to_register} is already in the database.`);
         }
