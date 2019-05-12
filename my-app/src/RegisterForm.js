@@ -36,7 +36,8 @@ class RegisterForm extends React.Component {
         validPassword: false,
         displayMessage: '',
         messageStyle: {color: "green"},
-        goToList: false
+        goToList: false,
+        id: null
     }
 
     //this.displayMessage = this.displayMessage.bind(this);
@@ -98,10 +99,14 @@ class RegisterForm extends React.Component {
             this.setState({
                 displayMessage: res.data,
                 messageStyle: {color: "green"},
+                id: res.data["LAST_INSERT_ID()"],
                 goToList: true
             });
             console.log("New user registered using React");
             console.log(qs.stringify(registration_info));
+            this.id = res.data["LAST_INSERT_ID()"];
+            console.log(this.id);
+            //console.log(`ID: ${qs.stringify(res.data)}`);
         })
         .catch( (error) => {
             this.setState({
@@ -111,11 +116,14 @@ class RegisterForm extends React.Component {
             console.log("There was an error: " + error);
         })
     }
+    
 
-    render() {
+    render( ) {
         if (this.state.goToList) {
             return(
-                <Router to="/todolist/1" component={ToDoList}></Router>
+                //<Router>
+                    <Router to={`/todolist/${this.state.id}`} component={ToDoList}></Router>
+                //</Router>
                 // if (redirectToReferrer) return <Redirect to={from} />; // <-- Look into this
 
                 //<Router>

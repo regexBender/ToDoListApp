@@ -26,7 +26,7 @@ class Main extends React.Component {
                 <Route exact path="/" component={App}></Route>
                 <Route exact path="/register" component={RegisterForm}></Route>
                 <Route exact path="/login" component={LoginForm}></Route>                
-                <Route path="/todolist/" component={ToDoList}></Route>
+                <Route path="/todolist/:id" component={ToDoList}></Route>
             </Router>
         )
     }

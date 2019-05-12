@@ -15,12 +15,14 @@ const config = {
 
 class ToDoList extends React.Component {
 
-    render() {
+    
 
+    render() {
+        console.log(this.props);
         return (
             <div className="ToDoList">
                 <div className="banner">
-                    <h1>To Do</h1>
+                    <h1>To Do for user {this.props.match.params.id}</h1>
                     <button className="logout_button">Logout</button>
                 </div>
 
