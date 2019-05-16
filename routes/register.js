@@ -3,9 +3,15 @@ var register = express.Router();
 const initDb = require("../database").initDb;
 const getDb = require("../database").getDb;
 const passwordValidator = require('password-validator');
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
 
 const bodyParser = require("body-parser");
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+
+
+
 
 register.use( (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -89,7 +95,8 @@ register.post("/", urlencodedParser, (req, res, next) => {
 
                     res.status(201);
                     //res.send("Email successfully registered");
-                    res.json(this_id[0]);
+                    const token = jwt.sign({user: email_to_register}, password_to_register);
+                    res.json({...this_id[0], jwt: token });
 
                 })
                 

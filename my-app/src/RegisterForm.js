@@ -100,6 +100,7 @@ class RegisterForm extends React.Component {
                 displayMessage: res.data,
                 messageStyle: {color: "green"},
                 id: res.data["LAST_INSERT_ID()"],
+                token: res.data.jwt,
                 goToList: true
             });
             console.log("New user registered using React");
@@ -120,15 +121,12 @@ class RegisterForm extends React.Component {
 
     render( ) {
         if (this.state.goToList) {
+            localStorage.setItem("JWT", this.state.token);
+                
             return(
-                //<Router>
-                    <Router to={`/todolist/${this.state.id}`} component={ToDoList}></Router>
-                //</Router>
-                // if (redirectToReferrer) return <Redirect to={from} />; // <-- Look into this
+                    
+                    <Router to={`/todolist/${this.state.id}`} component={ToDoList} />
 
-                //<Router>
-                //    <Route exact path="/todolist/1" component={ToDoList}></Route>
-                //</Router>
                 )
         }
 

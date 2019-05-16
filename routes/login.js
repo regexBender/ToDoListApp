@@ -2,6 +2,7 @@ var express = require("express");
 var login = express.Router();
 const initDb = require("../database").initDb;
 const getDb = require("../database").getDb;
+const passport = require("passport");
 
 const bodyParser = require("body-parser");
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -57,6 +58,8 @@ login.post("/", urlencodedParser, (req, res, next) => {
 
 });
 
-
+login.get('/getUser', passport.authenticate('jwt', { session: false }), (req, res) => {
+    res.send(req.user);
+});
 
 module.exports = login;
