@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import axios from 'axios';
 import './StyleSheet.css';
 
@@ -15,7 +16,8 @@ const config = {
 
 class ToDoList extends React.Component {
     state = {
-        userid: undefined
+        userid: undefined,
+        todoData: undefined
     }
 
     componentWillMount() {
@@ -51,13 +53,52 @@ class ToDoList extends React.Component {
             
     }
 
+    componentDidMount() {
+        axios.get(`/todos/${this.props.match.params.id}`)
+            .then( (res) => {
+                if (res) {
+                    this.setState({
+                        todoData: res.data
+                    }, () => {
+                        const listContainer = document.getElementById("todolist");
+                        let displayTodos = [];
+
+                        this.state.todoData.forEach( (item, index) => {
+
+                            const todo = 
+                                <div key={index}
+                                    className={(index % 2 == 0) ? "task" : "task2"}>
+                                    <input type="checkbox" defaultChecked={item.checked ? 1 : 0}/>
+                                    {item.content}
+                                </div>
+                            displayTodos.push(todo);
+                        });
+
+                        ReactDOM.render(displayTodos, listContainer);
+        
+                    });
+                    console.log(JSON.stringify(res.data));
+                } else {
+                    console.log("Res was null or undef");
+                }
+            })
+            
+            .catch( (err) => {
+                console.log("There was an error3 " + err);
+            })
+
+        
+
+
+    }
+
     logout = (event) => {
         localStorage.removeItem("JWT");
         this.props.history.push('/login');
     }
 
     render() {
-        console.log(this.props);
+        console.log(this.state.todoData);
         return (
             <div className="ToDoList">
                 <div className="banner">
@@ -78,13 +119,8 @@ class ToDoList extends React.Component {
                     </div>
                 <div className="main_container">
                     
-                    <div className="middle">
-                        <div className="task">
-                            <input type="checkbox" name="task1" value="1" />Task 1
-                        </div>
-                        <div className="task2">
-                            <input type="checkbox" name="task2" value="1" />Task 1
-                        </div>
+                    <div className="middle" id="todolist">
+                        
                     </div>
                 
                 </div>

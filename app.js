@@ -186,7 +186,7 @@ app.post("/todos", urlencodedParser, (req, res, next) => {
 
 app.get("/todos/:id", (req, res, next) => {
 
-    connection.query("SELECT * FROM `todo` WHERE `id` = ?", [req.param("id")], (err, rows, fields) => { // Do I need ` ticks?
+    connection.query("SELECT * FROM `todo` WHERE `userid` = ?", [req.param("id")], (err, rows, fields) => { // Do I need ` ticks?
         if (err) {
             res.status(400);
             res.send(err);
@@ -195,6 +195,7 @@ app.get("/todos/:id", (req, res, next) => {
         }
         res.status(200);
         console.log("Got ID " + req.param("id"));
+        console.log(JSON.stringify(rows));
         res.json(rows);
     });
 })
