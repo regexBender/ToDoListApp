@@ -58,8 +58,6 @@ login.post("/", urlencodedParser, (req, res, next) => {
 
 });
 
-login.get('/getUser', passport.authenticate('jwt', { session: false }), (req, res) => {
-    res.send(req.user);
-});
+
 
 module.exports = login;

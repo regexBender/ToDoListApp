@@ -14,8 +14,38 @@ const config = {
 
 
 class ToDoList extends React.Component {
+    state = {
+        userid: undefined
+    }
 
-    
+    componentDidMount() {
+        this.setState({
+            userid: this.props.match.params.id
+        });
+
+        const jwt = localStorage.getItem("JWT");
+
+        if (!jwt) {
+            this.props.history.push('/login');
+        }
+
+        axios.get(`/authUser/${this.props.match.params.id}`, 
+            { headers: {
+                Authorization: `Bearer ${jwt}`
+            }})
+            .then( (res) => {
+                if (res) {
+                    console.log("authenticated");
+                } else {
+                    console.log("authentication failed")
+                }
+            })
+            
+            .catch( (err) => {
+                console.log("There was an error " + err);
+            })
+            
+    }
 
     render() {
         console.log(this.props);

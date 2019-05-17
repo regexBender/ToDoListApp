@@ -7,9 +7,11 @@ const getDb = require("./database").getDb;
 
 const bodyParser = require("body-parser");
 
+const passport = require("passport");
+
 const app = express();
 
-
+/* Database */
 var connection;
 initDb((err) => { // Initialize the database connection
     if (err) {
@@ -18,6 +20,28 @@ initDb((err) => { // Initialize the database connection
 
     connection = getDb();
 });
+
+/* JWT Authorization */
+const JwtStrategy = require('passport-jwt').Strategy,
+    ExtractJwt = require('passport-jwt').ExtractJwt;
+const opts = {}
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.secretOrKey = 'qQ1';
+opts.issuer = 'accounts.examplesoft.com';
+opts.audience = 'yoursite.net';
+passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
+    User.findOne({id: jwt_payload.sub}, function(err, user) {
+        if (err) {
+            return done(err, false);
+        }
+        if (user) {
+            return done(null, user);
+        } else {
+            return done(null, false);
+            // or you could create a new account
+        }
+    });
+}));
 
 
 // Middleware function path invocations
@@ -32,32 +56,10 @@ app.use( (req, res, next) => {
     next();
   });
 
-/*
-const mysql = require("mysql");
-const connection = mysql.createConnection({
-    host    : "localhost",
-    user    : "root",
-    password: "root",
-    database: "alec"
-});
-*/
 var PORT = 3001;
 
 // PM2 --> Look at this.
-/*
-connection.connect( (err) => { // How/where do I close with connect.end() ?
-        
-    if (err) {
-        throw err;
-    }   
 
-
-    console.log("Connected to database");
-});
-*/
-
-//app.use(bodyParser.urlencoded({ extended: false }));
-//app.use(bodyParser.json()); // How can I use this instead of urlencoded...? Is urlencoded preferable?
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var jsonParser = bodyParser.json();
 
@@ -70,6 +72,11 @@ const todos = [
 ];
 
 var nextID = 6;
+
+app.get('/authUser/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    console.log("in /authUser/" + req.param("id"));
+    res.send(req.user);
+});
 
 app.get("/todos", (req, res) => {
     
