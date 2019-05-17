@@ -2,16 +2,25 @@ const express = require("express");
 const register = require("./routes/register");
 const login = require("./routes/login");
 
-const initDb = require("./database").initDb;
-const getDb = require("./database").getDb;
+
 
 const bodyParser = require("body-parser");
 
-const passport = require("passport");
+
 
 const app = express();
+app.use( (req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+  
 
 /* Database */
+
+const initDb = require("./database").initDb;
+const getDb = require("./database").getDb;
+
 var connection;
 initDb((err) => { // Initialize the database connection
     if (err) {
@@ -21,27 +30,76 @@ initDb((err) => { // Initialize the database connection
     connection = getDb();
 });
 
-/* JWT Authorization */
-const JwtStrategy = require('passport-jwt').Strategy,
-    ExtractJwt = require('passport-jwt').ExtractJwt;
-const opts = {}
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = 'qQ1';
-opts.issuer = 'accounts.examplesoft.com';
-opts.audience = 'yoursite.net';
-passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
-    User.findOne({id: jwt_payload.sub}, function(err, user) {
-        if (err) {
-            return done(err, false);
-        }
-        if (user) {
-            return done(null, user);
-        } else {
-            return done(null, false);
-            // or you could create a new account
-        }
-    });
-}));
+/*-- Database --*/
+
+/* JWT Authentication */
+
+const passport = require("passport");
+const passportJWT = require("passport-jwt");
+//const passportLocal = require("passport-local");
+
+const JwtStrategy = passportJWT.Strategy;
+const ExtractJwt = passportJWT.ExtractJwt;
+//const LocalStrategy = passportLocal.Strategy;
+
+
+const opts = {
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    secretOrKey: 'secret'
+  };
+
+const strategy = new JwtStrategy(opts, (payload, done) => {
+    connection.query(
+        "SELECT userid FROM users WHERE email = ?", 
+        [payload.user], (err, rows, fields) => { 
+            if (err) {
+                console.log("godzilla");
+                return done(err, false);
+            }
+            if (rows.length) {
+                console.log("userid from database:" + JSON.stringify(rows));
+                console.log("payload: " + JSON.stringify(payload) );                
+                return done(null, rows[0].userid);
+            } else {
+                console.log("mothra: " + JSON.stringify(payload) );
+                return done(null, false);
+            }
+
+        })
+    
+});
+
+/*
+const strategy = new LocalStrategy(
+    {
+        usernameField: 'email',
+        passwordField: 'password'
+    },
+    (email, password, done) => {
+        connection.query(
+            "SELECT userid FROM users WHERE ?", {email: email, password: pasword},
+            (err, rows, fields) => { 
+                if (err) {
+                    console.log("godzilla");
+                    return done(err, false);
+                }
+                if (rows.length) {
+                    console.log("userid from database:" + JSON.stringify(rows));              
+                    return done(null, rows[0].userid);
+                } else {
+                    console.log("mothra: " + JSON.stringify(payload) );
+                    return done(null, false);
+                }
+    
+            })
+    }
+);
+*/
+passport.use(strategy);
+
+app.use(passport.initialize());
+
+/*-- JWT Authentication --*/
 
 
 // Middleware function path invocations
@@ -73,9 +131,20 @@ const todos = [
 
 var nextID = 6;
 
-app.get('/authUser/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
-    console.log("in /authUser/" + req.param("id"));
-    res.send(req.user);
+app.get('/authUser/:id', 
+    passport.authenticate('jwt', { session: false }), (req, res, next) => {
+        console.log("in /authUser/" + req.param("id"));
+
+        if (req.user != req.param("id")) {
+            console.log("req.user = " + req.user);
+            console.log("param id = " + req.param("id"));
+            res.status(401);
+            return next("The param id does not match JWT.");
+        }
+        
+        console.log("Authenticated with matching param id.")
+        console.log(req.user);
+        res.send("" + req.user); // Adding the string fixed the 500 error?
 });
 
 app.get("/todos", (req, res) => {

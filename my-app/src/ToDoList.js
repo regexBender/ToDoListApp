@@ -18,7 +18,7 @@ class ToDoList extends React.Component {
         userid: undefined
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.setState({
             userid: this.props.match.params.id
         });
@@ -37,14 +37,23 @@ class ToDoList extends React.Component {
                 if (res) {
                     console.log("authenticated");
                 } else {
-                    console.log("authentication failed")
+                    localStorage.removeItem("JWT");
+                    console.log("authentication failed");
+                    this.props.history.push('/login');
                 }
             })
             
             .catch( (err) => {
-                console.log("There was an error " + err);
+                localStorage.removeItem("JWT");
+                console.log("There was an error2 " + err);
+                this.props.history.push('/login');
             })
             
+    }
+
+    logout = (event) => {
+        localStorage.removeItem("JWT");
+        this.props.history.push('/login');
     }
 
     render() {
@@ -53,7 +62,11 @@ class ToDoList extends React.Component {
             <div className="ToDoList">
                 <div className="banner">
                     <h1>To Do for user {this.props.match.params.id}</h1>
-                    <button className="logout_button">Logout</button>
+                    <button 
+                        className="logout_button" 
+                        onClick={this.logout}>
+                            Logout
+                    </button>
                 </div>
 
                 <hr></hr>

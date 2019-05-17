@@ -21,12 +21,11 @@ class LoginForm extends React.Component {
         hasPassword: false,
         displayMessage: '',
         messageStyle: {color: "green"},
+        id: undefined,
+        token: undefined,
         goToList: false
     }
-        // What does bind() do?
-        //this.displayMessage = this.displayMessage.bind(this);
-
-
+        
     handleEmailChange = (event) => {
         var email = this.emailNode.value;
 
@@ -53,7 +52,6 @@ class LoginForm extends React.Component {
 
 
     handleSubmit = (event) => {
-        console.log("HERERERERE");
         event.preventDefault();
 
         console.log(this.emailNode.value);
@@ -77,6 +75,8 @@ class LoginForm extends React.Component {
             this.setState({
                 displayMessage: res.data,
                 messageStyle: {color: "green"},
+                id: res.data.userid,
+                token: res.data.jwt,
                 goToList: true
             });
             console.log("New user registered using React");
@@ -94,11 +94,10 @@ class LoginForm extends React.Component {
     render() {
         
         if (this.state.goToList) {
+            localStorage.setItem("JWT", this.state.token);
             return(
-                <Router to="/todolist/1" component={ToDoList}></Router>
-                //<Router>
-                //    <Route exact path="/todolist/1" component={ToDoList}></Route>
-                //</Router>
+                <Router to={`/todolist/${this.state.id}`} component={ToDoList} />
+                
                 )
         }
         
@@ -137,7 +136,7 @@ class LoginForm extends React.Component {
                                         onChange = {this.handlePasswordChange}
                                         ref = {password => (this.passwordNode = password)}
                                         className="register_text" 
-                                        type="text" 
+                                        type="password" 
                                         id="password" 
                                         name="password" 
                                         placeholder="Password123" />

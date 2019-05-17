@@ -36,8 +36,9 @@ class RegisterForm extends React.Component {
         validPassword: false,
         displayMessage: '',
         messageStyle: {color: "green"},
-        goToList: false,
-        id: null
+        id: undefined,
+        token: undefined,
+        goToList: false
     }
 
     //this.displayMessage = this.displayMessage.bind(this);
