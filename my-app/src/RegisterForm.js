@@ -139,7 +139,7 @@ class RegisterForm extends React.Component {
 
             <hr></hr>
 
-            <form id="register_form" onSubmit = {this.handleSubmit} action="/todolist/1">
+            <form id="register_form" onSubmit = {this.handleSubmit} >
                 <div className="main_container_register">
                     <div className="left">
                         <div className="register_label">

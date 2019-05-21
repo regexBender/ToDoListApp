@@ -130,7 +130,7 @@ const todos = [
 ];
 
 var nextID = 6;
-
+//express-jwt library
 app.get('/authUser/:id', 
     passport.authenticate('jwt', { session: false }), (req, res, next) => {
         console.log("in /authUser/" + req.param("id"));
