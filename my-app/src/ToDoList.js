@@ -15,6 +15,8 @@ const config = {
 
 
 class ToDoList extends React.Component {
+    _isMounted = false;
+
     state = {
         userid: undefined,
         todoData: undefined,
@@ -58,12 +60,19 @@ class ToDoList extends React.Component {
     }
 
     componentDidMount() {
+        this._isMounted = true;
         axios.get(`/todos/${this.props.match.params.id}`)
             .then( (res) => {
                 if (res) {
-                    this.setState({
+                    this.setState( () => ({
                         todoData: res.data
-                    }, () => {
+                    }), () => {
+                        if (this._isMounted) {
+                            window.addEventListener('load', this.renderTodos)
+                        }
+                    }
+                    /*
+                    () => {
                         const listContainer = document.getElementById("todolist");
                         let displayTodos = [];
 
@@ -71,7 +80,7 @@ class ToDoList extends React.Component {
                         this.state.todoData.forEach( (item, index) => {
 
                             const todo = 
-                                <div key={index}
+                                <div key={item.id}
                                     className={(index % 2 == 0) ? "task" : "task2"}>
                                     <input type="checkbox" defaultChecked={item.checked ? 1 : 0}/>
                                     {item.content}
@@ -81,8 +90,12 @@ class ToDoList extends React.Component {
 
                         ReactDOM.render(displayTodos, listContainer);
         
-                    });
-                    console.log(JSON.stringify(res.data));
+                    }
+                    */
+                    );
+                   
+                    //console.log(JSON.stringify(res.data));
+                     
                 } else {
                     console.log("Res was null or undef");
                 }
@@ -92,9 +105,10 @@ class ToDoList extends React.Component {
                 console.log("There was an error3 " + err);
             })
 
-        
+    }
 
-
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     logout = (event) => {
@@ -102,17 +116,54 @@ class ToDoList extends React.Component {
         this.props.history.push('/login');
     }
 
+    wrapTodo = (item, index) => {
+        item = <div key={item.id}
+                className={(index % 2 == 0) ? "task" : "task2"}>
+                <input type="checkbox" defaultChecked={item.checked ? 1 : 0}/>
+                {item.content}
+            </div>;
+
+        return item;
+    }
+
+    renderTodos = () => {
+        if (this._isMounted) {
+            const listContainer = document.getElementById("todolist");
+            let displayTodos = [];
+
+            // Javascript array.map would also work
+            displayTodos = this.state.todoData.map( (item, index) =>
+                this.wrapTodo(item, index)
+            /*
+                <div key={item.id}
+                    className={(index % 2 == 0) ? "task" : "task2"}>
+                    <input type="checkbox" defaultChecked={item.checked ? 1 : 0}/>
+                    {item.content}
+                </div>
+                */
+            );
+
+            ReactDOM.render(displayTodos, listContainer);
+        }
+    }
+
     addItem = (event) => {
         event.preventDefault();
-
+console.log("Godzilla");
         let newItem = {
             userid: this.state.userid,
             task: this.newItemContent
         }
-
+console.log("Test" + qs.stringify(newItem));
+debugger;
         axios.post("/todos", qs.stringify(newItem), config)
         .then( (res) => {
             if (res) {
+                let updatedTodos = this.state.todoData;
+                updatedTodos.push(res.data);
+                this.setState({
+                    todoData: updatedTodos
+                })
                 /*
                 this.addItem(res);
                 //TODO: implement addItem, rerender todos
@@ -147,7 +198,8 @@ class ToDoList extends React.Component {
 
                     <hr></hr>
                     <div className="add_item">
-                            <form action="">
+                            <form> {// onSubmit={this.addItem}
+                                    }
                                 <input 
                                     ref = {
                                         newItemContent => (this.newItemContent = newItemContent)
@@ -173,7 +225,7 @@ class ToDoList extends React.Component {
         } else {
             return(
                 <div className="Loading">
-                    Loading...
+                    
                 </div>
             )
         }
