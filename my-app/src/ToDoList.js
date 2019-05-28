@@ -27,7 +27,7 @@ class ToDoList extends React.Component {
         this.setState({
             userid: this.props.match.params.id
         });
-
+/*
         const jwt = localStorage.getItem("JWT");
 
         if (!jwt) {
@@ -56,30 +56,81 @@ class ToDoList extends React.Component {
                 console.log("There was an error2 " + err);
                 this.props.history.push('/login');
             })
-            
+     */       
     }
 
     componentDidMount() {
         this._isMounted = true;
-        axios.get(`/todos/${this.props.match.params.id}`)
+
+        const jwt = localStorage.getItem("JWT");
+
+        if (!jwt) {
+            this.props.history.push('/login');
+        }
+
+        axios.get(`/authUser/${this.props.match.params.id}`, // Look up async await to prevent flash
+            { headers: {
+                Authorization: `Bearer ${jwt}`
+            }})
             .then( (res) => {
-                if (res && this._isMounted) {
-                    this.setState( () => ({
-                        todoData: res.data
-                    }), () => {
-                        if (this._isMounted && this.state.todoData) {
-                            console.log("Godzookie");
-                            this.renderTodos();
-                            //window.addEventListener('load', this.renderTodos)
-                        }
-                    });                     
+                if (res) {
+                    console.log("authenticated");
+                    this.setState({
+                        authorized: true
+                    })
                 } else {
-                    console.log("Res was null or undef");
+                    localStorage.removeItem("JWT");
+                    console.log("authentication failed");
+                    this.props.history.push('/login');
                 }
             })
+            .then(
+                axios.get(`/todos/${this.props.match.params.id}`)
+                .then( (res) => {
+                    if (res && this._isMounted) {
+                        this.setState( () => ({
+                            todoData: res.data
+                        }), () => {
+                            if (this._isMounted && this.state.todoData) {
+                                this.renderTodos();
+                                //window.addEventListener('load', this.renderTodos)
+                            }
+                        });                     
+                    } else {
+                        console.log("Res was null or undef: " + JSON.stringify(res) );
+                    }
+                })
+                .catch( (err) => {
+                    console.log("There was an error3 " + err);
+                })
+            )
+
             .catch( (err) => {
-                console.log("There was an error3 " + err);
+                localStorage.removeItem("JWT");
+                console.log("There was an error2 " + err);
+                this.props.history.push('/login');
             })
+/*
+            axios.get(`/todos/${this.props.match.params.id}`)
+                .then( (res) => {
+                    if (res && this._isMounted) {
+                        this.setState( () => ({
+                            todoData: res.data
+                        }), () => {
+                            if (this._isMounted && this.state.todoData) {
+                                this.renderTodos();
+                                //window.addEventListener('load', this.renderTodos)
+                            }
+                        });                     
+                    } else {
+                        console.log("Res was null or undef: " + JSON.stringify(res) );
+                    }
+                })
+                .catch( (err) => {
+                    console.log("There was an error3 " + err);
+                })
+                */
+        
     }
 
     componentWillUnmount() {
@@ -101,45 +152,21 @@ class ToDoList extends React.Component {
         return item;
     }
 
-    renderTodos = async () => {
+    renderTodos = () => {
         console.log("_isMounted: " + this._isMounted);
         console.log("todoData: " + this.state.todoData);
-        let displayTodos = [];
-        if (this._isMounted && this.state.todoData) {
-        /*
-        
 
-        
-            const listContainer = new Promise( (resolve, reject) => {
-                resolve( document.getElementById("todolist") );
-             });
-            
-            listContainer.then(
-                () => {
-                    console.log("List Container: " + listContainer);
-                    displayTodos = this.state.todoData.map( (item, index) =>
-                    this.wrapTodo(item, index)
-                )}
-            ).then(
-                ReactDOM.render(displayTodos, listContainer)
-            );
-           */
-
-            
-            const listContainer = new Promise( (resolve, reject) => {
-               document.getElementById("todolist");
-               let displayTodos = [];
+        if (this._isMounted && this.state.todoData && this.state.authorized) {
+            let listContainer = document.getElementById("todolist");
+            let displayTodos = [];
 
             displayTodos = this.state.todoData.map( (item, index) =>
                 this.wrapTodo(item, index)
             );
-               resolve();
-            });
-            console.log("List Container: " + listContainer);
-            listContainer.then(ReactDOM.render(displayTodos, listContainer));
-            //await ReactDOM.render(displayTodos, listContainer);
             
+            //console.log("List Container: " + listContainer);
             
+            ReactDOM.render(displayTodos, listContainer); 
         }
     }
 
@@ -180,7 +207,7 @@ debugger;
 
     render() {
         console.log(this.state.todoData);
-        if (this.state.authorized) {
+        if (this._isMounted && this.state.todoData && this.state.authorized) {
             return (
                 <div className="ToDoList">
                     <div className="banner">
