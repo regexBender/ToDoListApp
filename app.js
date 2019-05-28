@@ -165,7 +165,8 @@ app.get("/todos", (req, res) => {
 //      post body is not limited 
 app.post("/todos", urlencodedParser, (req, res, next) => {
     
-    var task = req.body.task;
+    let userid = req.body.userid;
+    let task = req.body.task;
 
     connection.query("INSERT INTO `todo` SET ?", {content: task}, (err, results, fields) => {
         if (err) {

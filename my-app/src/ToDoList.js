@@ -63,48 +63,23 @@ class ToDoList extends React.Component {
         this._isMounted = true;
         axios.get(`/todos/${this.props.match.params.id}`)
             .then( (res) => {
-                if (res) {
+                if (res && this._isMounted) {
                     this.setState( () => ({
                         todoData: res.data
                     }), () => {
-                        if (this._isMounted) {
-                            window.addEventListener('load', this.renderTodos)
+                        if (this._isMounted && this.state.todoData) {
+                            console.log("Godzookie");
+                            this.renderTodos();
+                            //window.addEventListener('load', this.renderTodos)
                         }
-                    }
-                    /*
-                    () => {
-                        const listContainer = document.getElementById("todolist");
-                        let displayTodos = [];
-
-                        // Javascript array.map would also work
-                        this.state.todoData.forEach( (item, index) => {
-
-                            const todo = 
-                                <div key={item.id}
-                                    className={(index % 2 == 0) ? "task" : "task2"}>
-                                    <input type="checkbox" defaultChecked={item.checked ? 1 : 0}/>
-                                    {item.content}
-                                </div>
-                            displayTodos.push(todo);
-                        });
-
-                        ReactDOM.render(displayTodos, listContainer);
-        
-                    }
-                    */
-                    );
-                   
-                    //console.log(JSON.stringify(res.data));
-                     
+                    });                     
                 } else {
                     console.log("Res was null or undef");
                 }
             })
-            
             .catch( (err) => {
                 console.log("There was an error3 " + err);
             })
-
     }
 
     componentWillUnmount() {
@@ -126,24 +101,45 @@ class ToDoList extends React.Component {
         return item;
     }
 
-    renderTodos = () => {
-        if (this._isMounted) {
-            const listContainer = document.getElementById("todolist");
-            let displayTodos = [];
+    renderTodos = async () => {
+        console.log("_isMounted: " + this._isMounted);
+        console.log("todoData: " + this.state.todoData);
+        let displayTodos = [];
+        if (this._isMounted && this.state.todoData) {
+        /*
+        
 
-            // Javascript array.map would also work
+        
+            const listContainer = new Promise( (resolve, reject) => {
+                resolve( document.getElementById("todolist") );
+             });
+            
+            listContainer.then(
+                () => {
+                    console.log("List Container: " + listContainer);
+                    displayTodos = this.state.todoData.map( (item, index) =>
+                    this.wrapTodo(item, index)
+                )}
+            ).then(
+                ReactDOM.render(displayTodos, listContainer)
+            );
+           */
+
+            
+            const listContainer = new Promise( (resolve, reject) => {
+               document.getElementById("todolist");
+               let displayTodos = [];
+
             displayTodos = this.state.todoData.map( (item, index) =>
                 this.wrapTodo(item, index)
-            /*
-                <div key={item.id}
-                    className={(index % 2 == 0) ? "task" : "task2"}>
-                    <input type="checkbox" defaultChecked={item.checked ? 1 : 0}/>
-                    {item.content}
-                </div>
-                */
             );
-
-            ReactDOM.render(displayTodos, listContainer);
+               resolve();
+            });
+            console.log("List Container: " + listContainer);
+            listContainer.then(ReactDOM.render(displayTodos, listContainer));
+            //await ReactDOM.render(displayTodos, listContainer);
+            
+            
         }
     }
 
