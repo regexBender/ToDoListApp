@@ -113,7 +113,7 @@ input[type=checkbox] {
 }
 
 .complete {
-    background-color: rgb(110, 223, 110);
+ /*background-color: rgb(110, 223, 110);*/
     text-decoration: line-through;
 }
 .complete2 {
