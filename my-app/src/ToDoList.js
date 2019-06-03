@@ -172,29 +172,28 @@ class ToDoList extends React.Component {
 
     addItem = (event) => {
         event.preventDefault();
-console.log("Godzilla");
+        
         let newItem = {
             userid: this.state.userid,
-            task: this.newItemContent
+            task: this.newItemContent.value
         }
-console.log("Test" + qs.stringify(newItem));
-debugger;
+
         axios.post("/todos", qs.stringify(newItem), config)
         .then( (res) => {
             if (res) {
-                let updatedTodos = this.state.todoData;
-                updatedTodos.push(res.data);
-                this.setState({
-                    todoData: updatedTodos
+                console.log(JSON.stringify(res.data));
+                
+                this.setState( (state) => {
+                    state.todoData.push(res.data);
+                    return state.todoData;
+                }, () => {
+                    console.log(this.state.todoData[this.state.todoData.length - 1].content)
+                    this.renderTodos();
                 })
-                /*
-                this.addItem(res);
-                //TODO: implement addItem, rerender todos
-                ReactDOM.render(displayTodos, listContainer);
-        
+                
             
                 console.log(JSON.stringify(res.data));
-                */
+                
             } else {
                 console.log("Res was null or undef");
             }
@@ -203,6 +202,7 @@ debugger;
         .catch( (err) => {
             console.log("There was an error3 " + err);
         })
+        
     }
 
     render() {
@@ -221,7 +221,7 @@ debugger;
 
                     <hr></hr>
                     <div className="add_item">
-                            <form> {// onSubmit={this.addItem}
+                            <form onSubmit={this.addItem}> { 
                                     }
                                 <input 
                                     ref = {

@@ -168,7 +168,7 @@ app.post("/todos", urlencodedParser, (req, res, next) => {
     let userid = req.body.userid;
     let task = req.body.task;
 
-    connection.query("INSERT INTO `todo` SET ?", {content: task}, (err, results, fields) => {
+    connection.query("INSERT INTO `todo` SET ?", {content: task, userid: userid}, (err, results, fields) => {
         if (err) {
             res.status(400);
             res.send(err);
@@ -178,7 +178,7 @@ app.post("/todos", urlencodedParser, (req, res, next) => {
         res.status(201);
         console.log("Task added.");
         connection.query("SELECT * FROM `todo` WHERE id = LAST_INSERT_ID()", (err, rows, fields) => {
-            res.json(rows);
+            res.json(rows[0]);
         });
         
     });
