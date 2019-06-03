@@ -98,12 +98,19 @@ class ToDoList extends React.Component {
                 className = {
                     (index % 2 == 0 ? "task" : "task2")
                     +
-                    (item.checked ? " complete" : "")
+                    (this.state.todoData.find( (todo) => {
+                        console.log("HERE!!!!");
+                        return todo.id == item.id
+                        }).checked ? " complete" : "")
                     }>
                 <input id={"checkbox_" + item.id}
                     type="checkbox" 
-                    defaultChecked={item.checked ? 1 : 0}
-                    onChange={ 
+                    defaultChecked={
+                        this.state.todoData.find( (todo) => {
+                        return todo.id == item.id
+                        }).checked ? 1 : 0
+                    }
+                    onInput={ 
                         this.updateCheckbox.bind(this, id)
                     }
                     
@@ -117,6 +124,19 @@ class ToDoList extends React.Component {
 
     updateCheckbox = (id) => {
         console.log("checkbox_" + id);
+        console.log(
+            this.state.todoData.find( (todo) => {
+            console.log("HERE!!!!");
+            return todo.id == id
+            }).checked);
+        this.setState(() => {
+            this.state.todoData.find( (todo) => {
+                return todo.id == id
+                }).checked ^= 1;
+        }, () => {
+            this.renderTodos();
+        });
+        /*
         let todoCheckbox = document.getElementById("checkbox_" + id);
         todoCheckbox.checked = !todoCheckbox.checked;
 
@@ -126,6 +146,7 @@ class ToDoList extends React.Component {
             todoDiv.className.replace(" complete", "");
 
         this.forceUpdate();
+        */
     }
   
     
