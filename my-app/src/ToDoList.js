@@ -58,10 +58,14 @@ class ToDoList extends React.Component {
                 axios.get(`/todos/${this.props.match.params.id}`)
                 .then( (res) => {
                     if (res && this._isMounted) {
-                        this.setState( () => ({
-                            todoData: res.data
-                        }), () => {
+                        this.setState( () => {
+                            this.state.todoData = {};
+                            res.data.forEach( (todo) => {
+                                this.state.todoData[todo.id] = todo;
+                            });
+                        }, () => {
                             if (this._isMounted && this.state.todoData) {
+                                console.log(JSON.stringify(this.state.todoData));
                                 this.renderTodos();
                                 //window.addEventListener('load', this.renderTodos)
                             }
@@ -99,15 +103,14 @@ class ToDoList extends React.Component {
                     (index % 2 == 0 ? "task" : "task2")
                     +
                     (this.state.todoData.find( (todo) => {
-                        console.log("HERE!!!!");
-                        return todo.id == item.id
-                        }).checked ? " complete" : "")
+                            return todo.id == item.id
+                    }).checked ? " complete" : "")
                     }>
                 <input id={"checkbox_" + item.id}
                     type="checkbox" 
                     defaultChecked={
                         this.state.todoData.find( (todo) => {
-                        return todo.id == item.id
+                            return todo.id == item.id
                         }).checked ? 1 : 0
                     }
                     onInput={ 
@@ -126,27 +129,15 @@ class ToDoList extends React.Component {
         console.log("checkbox_" + id);
         console.log(
             this.state.todoData.find( (todo) => {
-            console.log("HERE!!!!");
             return todo.id == id
             }).checked);
         this.setState(() => {
             this.state.todoData.find( (todo) => {
                 return todo.id == id
-                }).checked ^= 1;
+            }).checked ^= 1;
         }, () => {
             this.renderTodos();
         });
-        /*
-        let todoCheckbox = document.getElementById("checkbox_" + id);
-        todoCheckbox.checked = !todoCheckbox.checked;
-
-        let todoDiv = document.getElementById(id);
-        todoDiv.className = todoCheckbox.checked ?
-            todoDiv.className + " complete" :
-            todoDiv.className.replace(" complete", "");
-
-        this.forceUpdate();
-        */
     }
   
     
