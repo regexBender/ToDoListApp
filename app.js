@@ -207,9 +207,10 @@ app.get("/todos/:id", (req, res, next) => {
 // :id is different from other parameters (can access using req.param())
 // Access others via the body
 //      Look up "request body"
-app.patch("/todos/:id", urlencodedParser, (req, res, next) => {
+app.patch("/todos", urlencodedParser, (req, res, next) => {
     var update = {};
 
+    var id = req.body.id;
     var task = req.body.task;
     var check_flag = req.body.checked;
 
@@ -222,7 +223,7 @@ app.patch("/todos/:id", urlencodedParser, (req, res, next) => {
     }
     
 
-    connection.query("UPDATE `todo` SET ? WHERE `id` = ?", [update, req.param("id")], (err, results, fields) => {
+    connection.query("UPDATE `todo` SET ? WHERE `id` = ?", [update, id], (err, results, fields) => {
         if (err) {
             res.status(400);
             res.send(err);

@@ -135,6 +135,16 @@ class ToDoList extends React.Component {
                 }).checked ^= 1;
         }, () => {
             this.renderTodos();
+            let updateItem = {
+                id: id,
+                checked: this.state.todoData.find( (todo) => {
+                    return todo.id == id
+                    }).checked
+            }
+            axios.patch("/todos", qs.stringify(updateItem), config)
+            .catch( (err) => {
+                console.log("There was an error4 " + err);
+            })
         });
         /*
         let todoCheckbox = document.getElementById("checkbox_" + id);
