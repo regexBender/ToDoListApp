@@ -13,16 +13,14 @@ const config = {
     }
 };
 
-
-
-
 class ToDoList extends React.Component {
     _isMounted = false;
 
     state = {
         userid: undefined,
         todoData: undefined,
-        authorized: false
+        authorized: false,
+        hasNewItemContent: false
     }
 
     componentWillMount() {
@@ -105,10 +103,13 @@ class ToDoList extends React.Component {
                 console.log("There was an error4 " + err);
             })
         });
+        this.forceUpdate();
     }
 
     addItem = (event) => {
         event.preventDefault();
+
+        console.log("new Item content " + this.newItemContent.value);
 
         let newItem = {
             userid: this.state.userid,
@@ -140,8 +141,11 @@ class ToDoList extends React.Component {
     }
 
     getTodos() {
-        return this.state.todoData.map(todo => {
-            const props = {
+        let todoDataDisplay = this.state.todoData;
+
+        return todoDataDisplay.slice(0).reverse().map( (todo, index) => {
+            let props = {
+                index: index,
                 id: todo.id,
                 content: todo.content,
                 checked: todo.checked,
@@ -149,6 +153,14 @@ class ToDoList extends React.Component {
             }
             return <ToDoItem {...props} />;
         });
+    }
+
+    handleTextInput = () => {
+        if (this.newItemContent) {
+            this.setState({
+                hasNewItemContent: this.newItemContent.value.length
+            })
+        }
     }
 
     render() {
@@ -167,22 +179,24 @@ class ToDoList extends React.Component {
 
                     <hr></hr>
                     <div className="add_item">
-                            <form onSubmit={this.addItem}> {
-                                    }
+                            <form onSubmit={this.addItem}>
                                 <input
                                     ref = {
                                         newItemContent => (this.newItemContent = newItemContent)
                                     }
+                                    onChange={ this.handleTextInput }
                                     className="input_text"
                                     type="text"
                                     id="add_item"
                                     name="add_item"
-                                    placeholder="Add an item." />
+                                    placeholder="Add an item."
+                                />
                                 <input
                                     className="submit_task"
                                     type="submit"
-                                    disabled={!this.newItemContent}
-                                    value="+" />
+                                    disabled={ Boolean(!this.state.hasNewItemContent) }
+                                    value="+"
+                                />
                             </form>
                         </div>
                     <div className="main_container">

@@ -14,9 +14,9 @@ class ToDoItem extends React.Component {
             <div key = {this.props.id} className = {this.getClasses()}>
                 <input id = { "checkbox_" + this.props.id }
                     type = "checkbox"
-                    checked = {this.props.checked ? 1 : 0}
+                    defaultChecked = {this.props.checked ? 1 : 0}
                     onClick = {
-                        this.props.updateCheckbox(this.props.id)
+                       () => this.props.updateCheckbox(this.props.id)
                     }
 
                 />
