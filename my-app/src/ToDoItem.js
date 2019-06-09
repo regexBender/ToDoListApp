@@ -1,4 +1,5 @@
 import React from 'react';
+import './StyleSheet.css';
 
 class ToDoItem extends React.Component {
 
@@ -10,16 +11,16 @@ class ToDoItem extends React.Component {
 
     render() {
         return (
-            <div key={this.props.id} className={this.getClasses()}>
-                <input id={ "checkbox_" + this.props.id }
-                    type="checkbox"
-                    checked={this.props.checked ? 1 : 0}
-                    onInput={
-                        this.propsupdateCheckbox(this.props.id)
+            <div key = {this.props.id} className = {this.getClasses()}>
+                <input id = { "checkbox_" + this.props.id }
+                    type = "checkbox"
+                    checked = {this.props.checked ? 1 : 0}
+                    onClick = {
+                        this.props.updateCheckbox(this.props.id)
                     }
 
                 />
-                { item.content }
+                { this.props.content }
             </div>
         );
     };
@@ -27,4 +28,4 @@ class ToDoItem extends React.Component {
 
 // id, checked, index, content, updateCheckbox
 
-export default ToDoList;
+export default ToDoItem;

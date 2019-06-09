@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import axios from 'axios';
 import './StyleSheet.css';
 
+import ToDoItem from './ToDoItem';
+
 const qs = require('qs');
 
 const config = {
@@ -55,16 +57,11 @@ class ToDoList extends React.Component {
                 }
                 return axios.get(`/todos/${this.props.match.params.id}`);
             })
-            .then(res => {
+            .then( (res) => {
                 if (res && this._isMounted) {
                     this.setState( () => ({
                         todoData: res.data
-                    }), () => {
-                        if (this._isMounted && this.state.todoData) {
-                            this.renderTodos();
-                            //window.addEventListener('load', this.renderTodos)
-                        }
-                    });
+                    }) );
                 } else {
                     console.log("Res was null or undef: " + JSON.stringify(res) );
                 }
@@ -86,41 +83,10 @@ class ToDoList extends React.Component {
         this.props.history.push('/login');
     }
 
-    wrapTodo = (item, index) => {
-        let id = item.id;
-        let itemDiv = <div key={item.id} id={item.id}
-                className = {
-                    (index % 2 == 0 ? "task" : "task2")
-                    +
-                    (this.state.todoData.find( (todo) => {
-                        console.log("HERE!!!!");
-                        return todo.id == item.id
-                        }).checked ? " complete" : "")
-                    }>
-                <input id={"checkbox_" + item.id}
-                    type="checkbox"
-                    defaultChecked={
-                        this.state.todoData.find( (todo) => {
-                        return todo.id == item.id
-                        }).checked ? 1 : 0
-                    }
-                    onInput={
-                        this.updateCheckbox.bind(this, id)
-                    }
-
-                />
-                {item.content}
-            </div>;
-
-        return itemDiv;
-    }
-
-
     updateCheckbox = (id) => {
         console.log("checkbox_" + id);
         console.log(
             this.state.todoData.find( (todo) => {
-            console.log("HERE!!!!");
             return todo.id == id
             }).checked);
         this.setState(() => {
@@ -128,7 +94,6 @@ class ToDoList extends React.Component {
                 return todo.id == id
                 }).checked ^= 1;
         }, () => {
-            this.renderTodos();
             let updateItem = {
                 id: id,
                 checked: this.state.todoData.find( (todo) => {
@@ -140,37 +105,6 @@ class ToDoList extends React.Component {
                 console.log("There was an error4 " + err);
             })
         });
-        /*
-        let todoCheckbox = document.getElementById("checkbox_" + id);
-        todoCheckbox.checked = !todoCheckbox.checked;
-
-        let todoDiv = document.getElementById(id);
-        todoDiv.className = todoCheckbox.checked ?
-            todoDiv.className + " complete" :
-            todoDiv.className.replace(" complete", "");
-
-        this.forceUpdate();
-        */
-    }
-
-
-
-    renderTodos = () => {
-        console.log("_isMounted: " + this._isMounted);
-        //console.log("todoData: " + this.state.todoData);
-
-        if (this._isMounted && this.state.todoData && this.state.authorized) {
-            let listContainer = document.getElementById("todolist");
-            let displayTodos = [];
-
-            displayTodos = this.state.todoData.map( (item, index) =>
-                this.wrapTodo(item, index)
-            );
-
-            //console.log("List Container: " + listContainer);
-
-            ReactDOM.render(displayTodos.reverse(), listContainer);
-        }
     }
 
     addItem = (event) => {
@@ -189,9 +123,6 @@ class ToDoList extends React.Component {
                 this.setState( (state) => {
                     state.todoData.push(res.data);
                     return state.todoData;
-                }, () => {
-                    console.log(this.state.todoData[this.state.todoData.length - 1].content)
-                    this.renderTodos();
                 })
 
 
@@ -213,9 +144,10 @@ class ToDoList extends React.Component {
             const props = {
                 id: todo.id,
                 content: todo.content,
-                checked: todo.checked
+                checked: todo.checked,
+                updateCheckbox: this.updateCheckbox
             }
-            return <TodoItem {...props} />;
+            return <ToDoItem {...props} />;
         });
     }
 
