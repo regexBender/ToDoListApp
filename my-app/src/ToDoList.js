@@ -119,15 +119,10 @@ class ToDoList extends React.Component {
         axios.post("/todos", qs.stringify(newItem), config)
         .then( (res) => {
             if (res) {
-                //console.log(JSON.stringify(res.data));
-
                 this.setState( (state) => {
                     state.todoData.push(res.data);
                     return state.todoData;
                 })
-
-
-                //console.log(JSON.stringify(res.data));
 
             } else {
                 console.log("Res was null or undef");
@@ -151,7 +146,7 @@ class ToDoList extends React.Component {
                 checked: todo.checked,
                 updateCheckbox: this.updateCheckbox
             }
-            return <ToDoItem {...props} />;
+            return <ToDoItem key = {todo.id} { ...props} />;
         });
     }
 
@@ -164,7 +159,7 @@ class ToDoList extends React.Component {
     }
 
     render() {
-        //console.log(this.state.todoData);
+        
         if (this._isMounted && this.state.todoData && this.state.authorized) {
             return (
                 <div className="ToDoList">

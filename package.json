@@ -19,9 +19,9 @@
   "homepage": "https://github.com/aleclandow/ToDoListApp#readme",
   "dependencies": {
     "body-parser": "^1.18.3",
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mysql": "^2.16.0",
+    "mysql": "^2.17.1",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

@@ -11,7 +11,7 @@ class ToDoItem extends React.Component {
 
     render() {
         return (
-            <div key = {this.props.id} className = {this.getClasses()}>
+            <div id = {"todo_" + this.props.id} className = {this.getClasses()}>
                 <input id = { "checkbox_" + this.props.id }
                     type = "checkbox"
                     defaultChecked = {this.props.checked ? 1 : 0}
@@ -26,6 +26,5 @@ class ToDoItem extends React.Component {
     };
 }
 
-// id, checked, index, content, updateCheckbox
 
 export default ToDoItem;

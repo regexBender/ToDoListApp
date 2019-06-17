@@ -69,32 +69,7 @@ const strategy = new JwtStrategy(opts, (payload, done) => {
     
 });
 
-/*
-const strategy = new LocalStrategy(
-    {
-        usernameField: 'email',
-        passwordField: 'password'
-    },
-    (email, password, done) => {
-        connection.query(
-            "SELECT userid FROM users WHERE ?", {email: email, password: pasword},
-            (err, rows, fields) => { 
-                if (err) {
-                    console.log("godzilla");
-                    return done(err, false);
-                }
-                if (rows.length) {
-                    console.log("userid from database:" + JSON.stringify(rows));              
-                    return done(null, rows[0].userid);
-                } else {
-                    console.log("mothra: " + JSON.stringify(payload) );
-                    return done(null, false);
-                }
-    
-            })
-    }
-);
-*/
+
 passport.use(strategy);
 
 app.use(passport.initialize());
