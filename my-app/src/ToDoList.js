@@ -82,15 +82,12 @@ class ToDoList extends React.Component {
     }
 
     updateCheckbox = (id) => {
-        console.log("checkbox_" + id);
-        console.log(
-            this.state.todoData.find( (todo) => {
-            return todo.id == id
-            }).checked);
-        this.setState(() => {
-            this.state.todoData.find( (todo) => {
+        
+        this.setState((state) => {
+            state.todoData.find( (todo) => {
                 return todo.id == id
                 }).checked ^= 1;
+                return state.todoData;
         }, () => {
             let updateItem = {
                 id: id,
@@ -103,7 +100,7 @@ class ToDoList extends React.Component {
                 console.log("There was an error4 " + err);
             })
         });
-        this.forceUpdate();
+        //this.forceUpdate();
     }
 
     addItem = (event) => {
@@ -146,7 +143,7 @@ class ToDoList extends React.Component {
                 checked: todo.checked,
                 updateCheckbox: this.updateCheckbox
             }
-            return <ToDoItem key = {todo.id} { ...props} />;
+            return <ToDoItem key = {todo.id} {...props} />;
         });
     }
 
