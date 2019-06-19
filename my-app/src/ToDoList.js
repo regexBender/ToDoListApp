@@ -20,6 +20,7 @@ class ToDoList extends React.Component {
         userid: undefined,
         todoData: [],
         checkedTodoData: [],
+        allData: [],
         authorized: false,
         textInput: ""
     }
@@ -59,7 +60,7 @@ class ToDoList extends React.Component {
             .then( (res) => {
                 if (res && this._isMounted) {
                     this.setState( () => ({
-                        todoData: res.data
+                        todoData: res.data            
                     }) );
                 } else {
                     console.log("Res was null or undef: " + JSON.stringify(res) );
@@ -71,6 +72,19 @@ class ToDoList extends React.Component {
                 this.props.history.push('/login');
             })
 
+    }
+
+    sortData (res) {
+        this.setState( () => ({
+            todoData: res.data.filter( (todo) => {
+                return todo.checked
+            }),
+            checkedTodoData: res.data.filter( (todo) => {
+                return !todo.checked
+            }),
+            allData: res.data
+
+        }) );
     }
 
     componentWillUnmount() {
@@ -132,7 +146,22 @@ class ToDoList extends React.Component {
 
     }
 
-    getTodos(todoData) {
+
+    getCheckedTodos() {
+        return this.state.todoData.filter( (todo) => {
+            return todo.checked
+        });
+    }
+
+    getUncheckedTodos() {
+        return this.state.todoData.filter( (todo) => {
+            return !todo.checked
+        });
+    }
+
+    
+
+    displayTodos(todoData) {
         let todoDataDisplay = todoData;
 
         return todoDataDisplay.slice(0).reverse().map( (todo, index) => {
@@ -197,10 +226,14 @@ class ToDoList extends React.Component {
                     <div className="main_container">
 
                         <div className="middle" id="todolist">
-                            {this.getTodos(this.state.todoData)}
+                            {this.displayTodos(
+                                this.getUncheckedTodos() 
+                            )}
                         </div>
                         <div className="middle" id="todolist">
-                            {this.getTodos(this.state.checkedTodoData)}
+                            {this.displayTodos( 
+                                this.getCheckedTodos() 
+                            )}
                         </div>
 
                     </div>
