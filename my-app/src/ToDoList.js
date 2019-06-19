@@ -96,6 +96,10 @@ class ToDoList extends React.Component {
         this.props.history.push('/login');
     }
 
+    sleep (time) {
+        return new Promise((resolve) => setTimeout(resolve, time));
+    }
+
     updateCheckbox = (id) => {
         
         this.setState((state) => {
@@ -162,6 +166,7 @@ class ToDoList extends React.Component {
     
 
     displayTodos(todoData) {
+        this.sleep(5000);
         let todoDataDisplay = todoData;
 
         return todoDataDisplay.slice(0).reverse().map( (todo, index) => {

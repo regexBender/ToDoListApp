@@ -4,7 +4,7 @@ import './StyleSheet.css';
 class ToDoItem extends React.Component {
 
     getClasses() {
-        const indexState = this.props.index % 2 === 0 ? "task" : "task2";
+        const indexState = "task"
         const completed = this.props.checked ? "complete" : "";
         return `${indexState} ${completed}`;
     }
