@@ -18,9 +18,11 @@ class ToDoList extends React.Component {
 
     state = {
         userid: undefined,
-        todoData: undefined,
+        todoData: [],
+        checkedTodoData: [],
         authorized: false,
-        hasNewItemContent: false
+        hasNewItemContent: false,
+        textInput: ""
     }
 
     componentWillMount() {
@@ -100,13 +102,10 @@ class ToDoList extends React.Component {
                 console.log("There was an error4 " + err);
             })
         });
-        //this.forceUpdate();
     }
 
     addItem = (event) => {
         event.preventDefault();
-
-        console.log("new Item content " + this.newItemContent.value);
 
         let newItem = {
             userid: this.state.userid,
@@ -119,6 +118,8 @@ class ToDoList extends React.Component {
                 this.setState( (state) => {
                     state.todoData.push(res.data);
                     return state.todoData;
+                },  () => {
+                    this.clearForm();
                 })
 
             } else {
@@ -132,8 +133,8 @@ class ToDoList extends React.Component {
 
     }
 
-    getTodos() {
-        let todoDataDisplay = this.state.todoData;
+    getTodos(todoData) {
+        let todoDataDisplay = todoData;
 
         return todoDataDisplay.slice(0).reverse().map( (todo, index) => {
             let props = {
@@ -147,7 +148,15 @@ class ToDoList extends React.Component {
         });
     }
 
-    handleTextInput = () => {
+    clearForm() {
+        this.setState({
+            textInput: "",
+            hasNewItemContent: false
+        })
+    }
+
+    handleTextInput = (event) => {
+        this.setState({textInput: this.newItemContent.value});
         if (this.newItemContent) {
             this.setState({
                 hasNewItemContent: this.newItemContent.value.length
@@ -181,12 +190,13 @@ class ToDoList extends React.Component {
                                     type="text"
                                     id="add_item"
                                     name="add_item"
+                                    value={this.state.textInput}
                                     placeholder="Add an item."
                                 />
                                 <input
                                     className="submit_task"
                                     type="submit"
-                                    disabled={ Boolean(!this.state.hasNewItemContent) }
+                                    disabled={ Boolean(!this.state.textInput.length) }
                                     value="+"
                                 />
                             </form>
@@ -194,7 +204,10 @@ class ToDoList extends React.Component {
                     <div className="main_container">
 
                         <div className="middle" id="todolist">
-                            {this.getTodos()}
+                            {this.getTodos(this.state.todoData)}
+                        </div>
+                        <div className="middle" id="todolist">
+                            {this.getTodos(this.state.checkedTodoData)}
                         </div>
 
                     </div>
