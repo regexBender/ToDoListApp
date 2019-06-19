@@ -21,7 +21,6 @@ class ToDoList extends React.Component {
         todoData: [],
         checkedTodoData: [],
         authorized: false,
-        hasNewItemContent: false,
         textInput: ""
     }
 
@@ -151,17 +150,11 @@ class ToDoList extends React.Component {
     clearForm() {
         this.setState({
             textInput: "",
-            hasNewItemContent: false
         })
     }
 
     handleTextInput = (event) => {
         this.setState({textInput: this.newItemContent.value});
-        if (this.newItemContent) {
-            this.setState({
-                hasNewItemContent: this.newItemContent.value.length
-            })
-        }
     }
 
     render() {
