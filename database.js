@@ -25,7 +25,8 @@ function initDb (callback) {
     _db.connect( (err) => {
         
         if (err) {
-            next(err);
+            console.log(err);
+            return(err);
         }   
     
         console.log("Connected to database");
