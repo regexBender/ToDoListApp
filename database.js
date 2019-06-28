@@ -17,8 +17,8 @@ function initDb (callback) {
     
     _db = mysql.createConnection({
         host    : "localhost",
-        user    : "root",
-        password: "",
+        user    : "alandow",
+        password: "otter",
         database: "alec"
     });
 
