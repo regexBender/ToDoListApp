@@ -122,6 +122,12 @@ app.get('/authUser/:id',
         res.send("" + req.user); // Adding the string fixed the 500 error?
 });
 
+
+app.get("/", (req, res) => {
+    res.send("You have reached the root route!");
+})
+
+
 app.get("/todos", (req, res) => {
     
     //res.json(todos);  // why not use send? // json interprets as JSON, can do more 
@@ -130,9 +136,6 @@ app.get("/todos", (req, res) => {
         res.status(200); // send back status once query is complete, must be before res.json
         res.json(rows);
     });
-    
-    
- 
 })
 
 // Need to use request body
